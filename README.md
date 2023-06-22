@@ -3,7 +3,7 @@ This git repository contains analysis codes/tools for the data collected using t
 ## Clone the package
 
 Package has a dependency on hipo library, which is a submodule.
-Use command:
+Use the command:
 
 ```
  git clone --recurse-submodules git@github.com:rafopar/uRWellTestProto.git
