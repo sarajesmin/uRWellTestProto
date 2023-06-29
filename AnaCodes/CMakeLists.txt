@@ -11,11 +11,34 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 
 
 ################################  SkimZeroSuppression  #############################################
-message("includes is  " ${ROOT_INCLUDE_DIR})
 add_executable(SkimZeroSuppression.exe SkimZeroSuppression.cc)
 target_link_libraries(SkimZeroSuppression.exe Hipo4 -lpthread -lz -lm -ldl -lssl -lcrypto uRWellLib ${ROOT_LIBRARIES} )
-target_include_directories(SkimZeroSuppression.exe PUBLIC ${INCLUDES} )
-install( TARGETS SkimZeroSuppression.exe
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/bin )
-install( TARGETS uRWellLib DESTINATION ${CMAKE_INSTALL_LIBDIR} )
 #################################################################################################
+
+################################  CheckDecoding.cc  #############################################
+add_executable(CheckDecoding.exe CheckDecoding.cc)
+target_link_libraries(CheckDecoding.exe Hipo4 -lpthread -lz -lm -ldl -lssl -lcrypto uRWellLib ${ROOT_LIBRARIES} )
+#################################################################################################
+
+################################  AnaClustering.cc  #############################################
+add_executable(AnaClustering.exe AnaClustering.cc)
+target_link_libraries(AnaClustering.exe Hipo4 -lpthread -lz -lm -ldl -lssl -lcrypto uRWellLib ${ROOT_LIBRARIES} )
+#################################################################################################
+
+
+################################ Installing Executable targets #############################
+install( TARGETS SkimZeroSuppression.exe CheckDecoding.exe AnaClustering.exe
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/bin )
+
+################################ Installing Non target files ###############################
+install( FILES DrawPedestals.cc
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+
+
+################################ Installing needed directores ##############################
+install( DIRECTORY
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/PedFiles)
+install( DIRECTORY
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/Figs )
+
+
