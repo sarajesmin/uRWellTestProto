@@ -6,11 +6,8 @@
 # LZ4_LIBRARY
 #
 
-message(" CMAKE_SOURCE_DIR is  " ${CMAKE_SOURCE_DIR})
-find_path(LZ4_INCLUDE_DIR NAMES lz4.h HINTS ${CMAKE_SOURCE_DIR}/hipo/lz4/lib)
-find_library(LZ4_LIBRARY NAMES lz4 HINTS ${CMAKE_SOURCE_DIR}/hipo/lz4/lib)
-#find_path(LZ4_INCLUDE_DIR NAMES lz4.h HINTS /group/clas12/packages/lz4/lib)
-#find_library(LZ4_LIBRARY NAMES lz4 HINTS /group/clas12/packages/lz4/lib)
+find_path(LZ4_INCLUDE_DIR NAMES lz4.h HINTS /group/clas12/packages/lz4/lib)
+find_library(LZ4_LIBRARY NAMES lz4 HINTS /group/clas12/packages/lz4/lib)
 
 # We require LZ4_compress_default() which was added in v1.7.0
 if (LZ4_LIBRARY)
