@@ -7,7 +7,7 @@ project(uRWellTestProto VERSION 1.0.1 DESCRIPTION "Tools for analysing data from
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_CXX_FLAGS "-std=c++14")
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules")
-set(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/build")
+#set(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/build")
 find_package(ROOT REQUIRED COMPONENTS RIO Net)
 find_package(LZ4 REQUIRED)
 add_definitions(-D__LZ4__)
