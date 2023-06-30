@@ -4,9 +4,6 @@ set(INCLUDES
   ${CMAKE_SOURCE_DIR}/hipo/hipo4)
 include_directories(${INCLUDES})
 link_directories(${CMAKE_SOURCE_DIR}/build/lib)
-add_library(hipo4lib STATIC IMPORTED)
-set_property( TARGET hipo4lib PROPERTY
-  IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/lib/libHipo4.a")
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 
