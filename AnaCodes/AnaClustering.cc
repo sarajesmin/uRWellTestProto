@@ -74,7 +74,7 @@ int main(int argc, char** argv) {
     hipo::bank bRunConf(factory.getSchema("RUN::config"));
 
 
-    TFile *file_out = new TFile(Form("TestClustering_%d.root", run), "Recreate");
+    TFile *file_out = new TFile(Form("AnaClustering_%d.root", run), "Recreate");
     TH2D h_n_GEM_vs_uRwellHits("h_n_GEM_vs_uRwellHits", "", 31, -0.5, 30, 31, -0.5, 30);
     TH2D h_n_V_vs_U_hits1("h_n_V_vs_U_hits1", "", 26, -0.5, 25.5, 26, -0.5, 25.5);
 
