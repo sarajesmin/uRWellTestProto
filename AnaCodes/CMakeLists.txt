@@ -31,7 +31,7 @@ install( TARGETS SkimZeroSuppression.exe CheckDecoding.exe AnaClustering.exe
   DESTINATION ${CMAKE_INSTALL_PREFIX}/bin )
 
 ################################ Installing Non target files ###############################
-install( FILES DrawPedestals.cc
+install( FILES DrawPedestals.cc DrawPlotsWithClustering.cc
   DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 
 
