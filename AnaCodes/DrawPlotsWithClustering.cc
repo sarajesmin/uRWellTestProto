@@ -125,6 +125,23 @@ int DrawPlotsWithClustering(int run) {
     c1->Print(Form("Figs/cl_V_coordinate1_%d.pdf", run));
     c1->Print(Form("Figs/cl_V_coordinate1_%d.png", run));
     c1->Print(Form("Figs/cl_V_coordinate1_%d.root", run));
+
+    TH1D *h_U_Coord_MultrCl2 = (TH1D*)file_in->Get("h_U_Coord_MultrCl2");
+    h_U_Coord_MultrCl2->SetTitle("; Cluster U coordinate [strip]");
+    h_U_Coord_MultrCl2->SetLineWidth(2);
+    h_U_Coord_MultrCl2->Draw();
+    c1->Print(Form("Figs/cl_U_coordinate2_%d.pdf", run));
+    c1->Print(Form("Figs/cl_U_coordinate2_%d.png", run));
+    c1->Print(Form("Figs/cl_U_coordinate2_%d.root", run));
+    
+    TH1D *h_V_Coord_MultrCl2 = (TH1D*)file_in->Get("h_V_Coord_MultrCl2");
+    h_V_Coord_MultrCl2->SetTitle("; Cluster V coordinate [strip]");
+    h_V_Coord_MultrCl2->SetLineWidth(2);
+    h_V_Coord_MultrCl2->Draw();
+    c1->Print(Form("Figs/cl_V_coordinate2_%d.pdf", run));
+    c1->Print(Form("Figs/cl_V_coordinate2_%d.png", run));
+    c1->Print(Form("Figs/cl_V_coordinate2_%d.root", run));
+    
     
     c1->SetLogz();
     TH2D *h_n_GEM_Y_vs_X_Hits1 = (TH2D*)file_in->Get("h_n_GEM_Y_vs_X_Hits1");

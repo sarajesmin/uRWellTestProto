@@ -91,6 +91,8 @@ int main(int argc, char** argv) {
     TH2D h_n_uRwell_V_vs_U_MultiHitCl("h_n_uRwell_V_vs_U_MultiHitCl", "", 21, -0.5, 20.5, 21, -0.5, 20.5);
     TH1D h_U_Coord_MultrCl1("h_U_Coord_MultrCl1", "", 200, 0., 750);
     TH1D h_V_Coord_MultrCl1("h_V_Coord_MultrCl1", "", 200, 0., 750);
+    TH1D h_U_Coord_MultrCl2("h_U_Coord_MultrCl2", "", 200, 0., 750);
+    TH1D h_V_Coord_MultrCl2("h_V_Coord_MultrCl2", "", 200, 0., 750);
     TH1D h_U_PeakADC_MultiCl1("h_U_PeakADC_MultiCl1", "", 200, 0., 1000.);
     TH1D h_V_PeakADC_MultiCl1("h_V_PeakADC_MultiCl1", "", 200, 0., 1000.);
     TH1D h_U_Coord_SingleHitCl1("h_U_Coord_SingleHitCl1", "", 200, 0., 750);
@@ -137,12 +139,12 @@ int main(int argc, char** argv) {
                 curHit.slot = buRwellHit.getInt("slot", ihit);
 
                 if (curHit.sector == sec_uRwell) {
-                    
+
                     //if( curHit.adcRel < 5. ){continue;}
-                    
+
                     v_uRwellHits.push_back(curHit);
 
-                    if (curHit.layer == layer_U_uRwell) {                       
+                    if (curHit.layer == layer_U_uRwell) {
                         v_U_Hits_uRwell.push_back(curHit);
                     } else if (curHit.layer == layer_V_uRwell) {
                         v_V_Hits_uRwell.push_back(curHit);
@@ -265,6 +267,21 @@ int main(int argc, char** argv) {
 
             if (n_GEMHits_X >= 2 && n_GEMHits_Y >= 2) {
                 h_n_uRwell_V_vs_U_MultiHitCl.Fill(n_U_MultiHit_clusters, n_V_MultiHit_clusters);
+
+                for (int iUcl = 0; iUcl < v_U_Clusters.size(); iUcl++) {
+                    int nhits = v_U_Clusters.at(iUcl).getHits()->size();
+                    if (nhits > 1) {
+                        h_U_Coord_MultrCl2.Fill(v_U_Clusters.at(iUcl).getAvgStrip());
+                    }
+                }
+                for (int iVcl = 0; iVcl < v_V_Clusters.size(); iVcl++) {
+                    int nhits = v_V_Clusters.at(iVcl).getHits()->size();
+                    if (nhits > 1) {
+                        h_V_Coord_MultrCl2.Fill(v_V_Clusters.at(iVcl).getAvgStrip());
+                    }
+                }
+
+
             }
 
             for (auto cur_Ucl : v_U_Clusters) {
