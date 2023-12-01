@@ -179,9 +179,6 @@ int DrawPlotsWithClustering(int run) {
     lat1->DrawLatex(0.15, 0.85, Form("Has V cluster = %d #rightarrow %1.2f %% ", counts_has_V_Cluster, 100.*double(counts_has_V_Cluster)/counts_integral ));
     lat1->DrawLatex(0.15, 0.8, Form("Has any cluster = %d #rightarrow %1.2f %% ", counts_has_AnyCluster, 100.*double(counts_has_AnyCluster)/counts_integral ));
     lat1->DrawLatex(0.15, 0.75, Form("Has U and V cluster = %d #rightarrow %1.2f %% ", counts_has_U_AND_V_Cluster, 100.*double(counts_has_U_AND_V_Cluster)/counts_integral ));    
-    c1->Print(Form("Figs/Number_OF_V_vs_U_clusters_%d.pdf", run));
-    c1->Print(Form("Figs/Number_OF_V_vs_U_clusters_%d.png", run));
-    c1->Print(Form("Figs/Number_OF_V_vs_U_clusters_%d.root", run));
     
     TCanvas *c2 = new TCanvas("c2", "", 1800., 1000.);
     c2->SetTopMargin(0.02);
@@ -203,6 +200,35 @@ int DrawPlotsWithClustering(int run) {
     c2->Print(Form("Figs/Cross_YXc2_%d.pdf", run));
     c2->Print(Form("Figs/Cross_YXc2_%d.png", run));
     c2->Print(Form("Figs/Cross_YXc2_%d.root", run));
+    
+    TF1 *f_Gaus = new TF1("f_Gaus", "[0]*TMath::Gaus(x, [1], [2])", -900., 900.);
+    f_Gaus->SetNpx(4500);
+    TF1 *f_GPol4 = new TF1("f_GPol4", "[0]*TMath::Gaus(x, [1], [2]) + [3] + x*( [4] + x*( [5] + x*( [6] + x*[7] ) )  )", -900., 900.);
+    f_GPol4->SetNpx(4500);
+    TF1 *f_Pol4 = new TF1("f_Pol4", "[0] + x*( [1] + x*( [2] + x*( [3] + x*[4] ) )  )", -900., 900.);
+    f_Pol4->SetNpx(4500);
+    f_Pol4->SetLineColor(4);
+    
+    TH1D *h_Cross_X2 = (TH1D*)h_Cross_YXc2->ProjectionX("h_Cross_X2", 1, h_Cross_YXc2->GetNbinsY() );
+    h_Cross_X2->Draw();
+    f_GPol4->SetParameters( h_Cross_X2->GetMaximum(), h_Cross_X2->GetBinCenter( h_Cross_X2->GetMaximumBin() ), 75. );
+    h_Cross_X2->Fit(f_GPol4, "MeV", "", -800, 800.);
+    double pars[8];
+    f_GPol4->GetParameters(pars);
+    f_Gaus->SetParameters(pars);
+    f_Pol4->SetParameters(&pars[3]);
+    f_Pol4->Draw("Same");
+    double N_Cross_BgrSubtr = f_Gaus->Integral(-800., 800.)/h_Cross_X2->GetBinWidth(15);
+    c2->Print(Form("Figs/Cross_X2_Fit_%d.pdf", run));
+    c2->Print(Form("Figs/Cross_X2_Fit_%d.png", run));
+    c2->Print(Form("Figs/Cross_X2_Fit_%d.root", run));
+    
+    c1->cd();
+    lat1->DrawLatex(0.15, 0.7, Form("Has Cross BgrSubtr = %d #rightarrow %1.2f %% ", int(N_Cross_BgrSubtr), 100.*double(N_Cross_BgrSubtr)/counts_integral ));
+    c1->Print(Form("Figs/Number_OF_V_vs_U_clusters_%d.pdf", run));
+    c1->Print(Form("Figs/Number_OF_V_vs_U_clusters_%d.png", run));
+    c1->Print(Form("Figs/Number_OF_V_vs_U_clusters_%d.root", run));
+    
     
     return 0;
 }
