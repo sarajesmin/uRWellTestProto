@@ -71,7 +71,7 @@ void DrawPedestals(int run) {
     }
 
     TH2D *h_ADC_chan_GEM = (TH2D*) file_in->Get("h_ADC_chan_GEM");
-    
+
     ofstream out_pedGEM(Form("PedFiles/GEM_Peds_%d", run));
     gr_index = 0;
     for (int ibin = 0; ibin < h_ADC_chan_GEM->GetNbinsX(); ibin++) {
@@ -88,7 +88,7 @@ void DrawPedestals(int run) {
         gr_Mean_GEM->SetPoint(gr_index, det_chan, mean);
         gr_RMS_GEM->SetPoint(gr_index, det_chan, rms);
         out_pedGEM << setw(5) << det_chan << setw(10) << mean << setw(10) << rms << endl;
-        
+
         gr_index = gr_index + 1;
     }
 
@@ -128,8 +128,8 @@ void DrawPedestals(int run) {
     c1->Print(Form("Figs/ped_RMS_globalVew_%d.root", run));
 
 
-    //    gr_RMS->SetMaximum(14);
-    //    gr_RMS->SetMinimum(0);
+    gr_RMS->SetMaximum(35);
+    gr_RMS->SetMinimum(0);
     c1->Modified();
     c1->Update();
     c1->SetGridy();
@@ -183,7 +183,7 @@ void DrawPedestals(int run) {
     gr_RMS_GEM->SetMarkerColor(4);
     gr_RMS_GEM->SetMinimum(0);
     gr_RMS_GEM->GetYaxis()->SetTitleOffset(0.5);
-    gr_RMS_GEM->Draw("APl");    
+    gr_RMS_GEM->Draw("APl");
     c1->Print(Form("Figs/ped_RMS_GEM_globalVew_%d.pdf", run));
     c1->Print(Form("Figs/ped_RMS_GEM_globalVew_%d.png", run));
     c1->Print(Form("Figs/ped_RMS_GEM_globalVew_%d.root", run));
