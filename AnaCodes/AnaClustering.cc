@@ -18,6 +18,7 @@
 #include <dictionary.h>
 
 #include "uRwellTools.h"
+#include <cxxopts.hpp>
 
 using namespace std;
 using namespace uRwellTools;
@@ -41,16 +42,41 @@ int main(int argc, char** argv) {
     char outputFile[256];
     char inputFile[256];
 
+
+    cxxopts::Options options("AnaClustering", "Performs clustering and also does analysis on cosmic data");
+    
+    options.add_options( )
+    ("r,Run", "Run number", cxxopts::value<int>())
+    ("t,Threshold", "Hit Threshold in terms of sigma", cxxopts::value<double>()->default_value("5"))
+    ("m,MinHits", "Number of minimum hits in the cluster", cxxopts::value<int>()->default_value("1") )
+    //("f,File", "File number of the given run", cxxopts::value<int>())
+    ;
+    
+    auto parsed_options = options.parse(argc, argv);
+    
     int run = 0;
     int fnum = -1;
-    if (argc == 2) {
-        run = atoi(argv[1]);
+    
+    
+    if( parsed_options.count("Run") ){
+        run = parsed_options["Run"].as<int>();
         sprintf(inputFile, "Skim_ZeroSuppr_%d_All.hipo", run);
-    } else {
-        std::cout << " *** please provide a run number..." << std::endl;
-        exit(0);
+    }else{
+        cout<<"The run number is nor provided. Exiting..."<<endl;
+        exit(1);
+    }
+    
+    
+    const double HitThr = parsed_options["Threshold"].as<double>();
+    if( !parsed_options.count("Threshold")){
+        cout<<"* You didn't provide the hit threshold, will use the default value "<<HitThr<<endl;
     }
 
+    const int MinClSize = parsed_options["MinHits"].as<int>();
+    if( !parsed_options.count("MinHits")){
+        cout<<"* You didn't provide the Minimum hits int the cluster, so will use the default value "<<MinClSize<<endl;
+    }    
+    
     hipo::reader reader;
     reader.open(inputFile);
 
@@ -68,13 +94,12 @@ int main(int argc, char** argv) {
     const int sec_GEM = 8;
     const double GEMHighThreshold = 10.; // 10 Sigma
     const double slot11_StripMin = 577.;
-
+    
     hipo::bank buRwellHit(factory.getSchema("uRwell::Hit"));
     hipo::bank bRAWADc(factory.getSchema("RAW::adc"));
     hipo::bank bRunConf(factory.getSchema("RUN::config"));
 
-
-    TFile *file_out = new TFile(Form("AnaClustering_%d.root", run), "Recreate");
+    TFile *file_out = new TFile(Form("AnaClustering_%d_Thr_%1.1f_MinHits_%d.root", run, HitThr, MinClSize), "Recreate");
     TH2D h_n_GEM_vs_uRwellHits("h_n_GEM_vs_uRwellHits", "", 31, -0.5, 30, 31, -0.5, 30);
     TH2D h_n_V_vs_U_hits1("h_n_V_vs_U_hits1", "", 26, -0.5, 25.5, 26, -0.5, 25.5);
 
@@ -102,6 +127,9 @@ int main(int argc, char** argv) {
     TH2D h_Cross_YXc2("h_Cross_YXc2", "", 200, -900., 900., 200, -500., 500.);
 
     TH2D h_GEM_XY1("h_GEM_XY1", "", 129, -0.5, 128.5, 129, -0.5, 128.5);
+
+    TH2D h_nVcl_vs_Ucoord1("h_nVcl_vs_Ucoord1", "", 200, 0., 710., 15, -0.5, 14.5);
+    TH2D h_nUcl_vs_Vcoord1("h_nUcl_vs_Vcoord1", "", 200, 0., 710., 15, -0.5, 14.5);
 
     try {
 
@@ -140,7 +168,7 @@ int main(int argc, char** argv) {
 
                 if (curHit.sector == sec_uRwell) {
 
-                    //if( curHit.adcRel < 5. ){continue;}
+                    if( curHit.adcRel < HitThr ){continue;}
 
                     v_uRwellHits.push_back(curHit);
 
@@ -284,15 +312,30 @@ int main(int argc, char** argv) {
 
             }
 
+            for (auto cur_Vcl : v_V_Clusters) {
+                double vAvgStrip = cur_Vcl.getAvgStrip();
+
+                //cout<<cur_Vcl.getHits()->size()<<endl;
+                
+                if (cur_Vcl.getHits()->size() < MinClSize) {
+                    continue;
+                }
+                //cout<<"Kuku"<<endl;
+                h_nVcl_vs_Ucoord1.Fill(vAvgStrip, n_U_MultiHit_clusters);
+
+            }
+
             for (auto cur_Ucl : v_U_Clusters) {
 
                 double uAvgStrip = cur_Ucl.getAvgStrip();
 
-                if (cur_Ucl.getHits()->size() < 2 /*|| uAvgStrip >= slot11_StripMin*/) {
+                if (cur_Ucl.getHits()->size() < MinClSize /*|| uAvgStrip >= slot11_StripMin*/) {
                     continue;
                 }
+
+                h_nVcl_vs_Ucoord1.Fill(uAvgStrip, n_V_MultiHit_clusters);
                 for (auto cur_Vcl : v_V_Clusters) {
-                    if (cur_Vcl.getHits()->size() < 2) {
+                    if (cur_Vcl.getHits()->size() < MinClSize) {
                         continue;
                     }
 
