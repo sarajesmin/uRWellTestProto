@@ -38,6 +38,53 @@ int uRwellTools::getSlot(int ch) {
 
 int uRwellTools::slot_Offset[uRwellTools::nSlot] = {0, 64, 192, 1448, 320, 1576, 1000, 1064, 1192, 448, 1320, 576};
 
+void uRwellTools::CalcEfficiencies(TH2* h_in, double &eff_U, double &eff_V, double &eff_OR, double &eff_AND) {
+    int binx1 = h_in->GetXaxis()->FindBin(1);
+    int binx2 = h_in->GetNbinsX() + 1;
+    int biny1 = h_in->GetYaxis()->FindBin(1);
+    int biny2 = h_in->GetNbinsY() + 1;
+    double counts_integral = h_in->Integral();
+    double counts_has_U_Cluster = h_in->Integral(binx1, binx2, 1, biny2);
+    double counts_has_V_Cluster = h_in->Integral(1, binx2, biny1, biny2);
+    double counts_has_AnyCluster = h_in->Integral() - h_in->GetBinContent(1, 1);
+    double counts_has_U_AND_V_Cluster = h_in->Integral(binx1, binx2, biny1, biny2);
+
+    eff_U = 100. * counts_has_U_Cluster / counts_integral;
+    eff_V = 100. * counts_has_V_Cluster / counts_integral;
+    eff_OR = 100. * counts_has_AnyCluster / counts_integral;
+    eff_AND = 100. * counts_has_U_AND_V_Cluster / counts_integral;
+}
+
+double uRwellTools::getNofBgrSbtrCrosses(TH2* h_in) {
+
+    TF1 *f_Gaus = new TF1("f_Gaus", "[0]*TMath::Gaus(x, [1], [2])", -900., 900.);
+    f_Gaus->SetNpx(4500);
+    TF1 *f_GPol4 = new TF1("f_GPol4", "[0]*TMath::Gaus(x, [1], [2]) + [3] + x*( [4] + x*( [5] + x*( [6] + x*[7] ) )  )", -900., 900.);
+    f_GPol4->SetNpx(4500);
+    TF1 *f_Pol4 = new TF1("f_Pol4", "[0] + x*( [1] + x*( [2] + x*( [3] + x*[4] ) )  )", -900., 900.);
+    f_Pol4->SetNpx(4500);
+    f_Pol4->SetLineColor(4);
+
+    TH1D *h_Cross_X2 = (TH1D*) h_in->ProjectionX("h_Cross_X2", 1, h_in->GetNbinsY());
+    h_Cross_X2->Draw();
+    f_GPol4->SetParameters(h_Cross_X2->GetMaximum(), h_Cross_X2->GetBinCenter(h_Cross_X2->GetMaximumBin()), 75.);
+    h_Cross_X2->Fit(f_GPol4, "MeV", "", -800, 800.);
+    double pars[8];
+    f_GPol4->GetParameters(pars);
+    f_Gaus->SetParameters(pars);
+    f_Pol4->SetParameters(&pars[3]);
+    f_Pol4->Draw("Same");
+    double N_Cross_BgrSubtr = f_Gaus->Integral(-800., 800.) / h_Cross_X2->GetBinWidth(15);
+
+    return N_Cross_BgrSubtr;
+}
+
+bool uRwellTools::IsInsideDetector(double x, double y) {
+    return y > uRWell_Y_min && y < uRWell_Y_max &&
+            y > (uRWell_Y_min + (x - uRwell_XBot)*(uRWell_Y_max - uRWell_Y_min) / (uRwell_XTop - uRwell_XBot) ) && 
+            y > (uRWell_Y_min + (x + uRwell_XBot)*(uRWell_Y_max - uRWell_Y_min) / (uRwell_XBot - uRwell_XTop) );
+}
+
 namespace uRwellTools {
 
     uRwellCluster::uRwellCluster() {
@@ -100,7 +147,7 @@ namespace uRwellTools {
             double curHitEnergy = v_Hits.at(i).adc;
 
             //cout << "v_Hits.at(i).strip = " << v_Hits.at(i).strip << "    curStrip =  " << curStrip << endl;
-            if ( (curStrip - prev_Strip <= (clStripGap + 1)) || i == 0) {
+            if ((curStrip - prev_Strip <= (clStripGap + 1)) || i == 0) {
                 clEnergy = clEnergy + curHitEnergy;
                 v_ClHits.push_back(v_Hits.at(i));
 
