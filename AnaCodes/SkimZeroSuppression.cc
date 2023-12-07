@@ -5,7 +5,10 @@
  * Created on May 4, 2023, 4:03 PM
  */
 
+#include <cstdio>
 #include <cstdlib>
+#include <fstream>
+
 
 #include <TH2D.h>
 #include <TH1D.h>
@@ -33,6 +36,8 @@ struct uRwellHit {
     int slot;
 };
 
+
+bool fileExists(const char* filename);
 /*
  * 
  */
@@ -50,6 +55,14 @@ int main(int argc, char** argv) {
         sprintf(inputFile, "Data/decoded_%d_%d.hipo", run, fnum);
         //sprintf(inputFile, "Data/decoded_%d.hipo", run);
         sprintf(outputFile, "Skim_ZeroSuppr_%d_%d.hipo", run, fnum);
+        std::string outFileName_Str = outputFile;
+                
+        if( fileExists(outputFile) ){
+            cout<<"The file "<<outFileName_Str.c_str()<<" exists. The program will not run"<<endl;
+            cout<<"Exiting"<<endl;
+            exit(1);
+        }
+        
     } else {
         std::cout << " *** please provide a run number..." << std::endl;
         exit(0);
@@ -336,4 +349,13 @@ int getSlot(int ch) {
         return -1; // Should not happen, non existing slot
     }
 
+}
+
+bool fileExists(const char* filename) {
+    FILE* file = fopen(filename, "r");
+    if (file) {
+        fclose(file);
+        return true;
+    }
+    return false;
 }
