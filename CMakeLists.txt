@@ -20,7 +20,7 @@ IF("${isSystemDir}" STREQUAL "-1")
    SET(CMAKE_INSTALL_RPATH "${CMAKE_SOURCE_DIR}/urwelllib")
 ENDIF("${isSystemDir}" STREQUAL "-1")
 
-include_directories(${PROJECT_SOURCE_DIR}/include)
+include_directories(${PROJECT_SOURCE_DIR}/include ${ROOT_INCLUDE_DIR})
 set(uRWell_SOURCE_FILES
   "${PROJECT_SOURCE_DIR}/src/uRwellTools.cc" )
 set(uRWell_HEADERS

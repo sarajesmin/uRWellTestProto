@@ -7,7 +7,7 @@ link_directories(${CMAKE_SOURCE_DIR}/build/lib)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 
-################################  SkimZeroSuppression  #############################################
+################################  SkimZeroSuppression  ##########################################
 add_executable(SkimZeroSuppression.exe SkimZeroSuppression.cc)
 target_link_libraries(SkimZeroSuppression.exe Hipo4 uRWellLib ${ROOT_LIBRARIES} )
 #################################################################################################
@@ -22,15 +22,19 @@ add_executable(AnaClustering.exe AnaClustering.cc)
 target_link_libraries(AnaClustering.exe Hipo4 uRWellLib ${ROOT_LIBRARIES} )
 #################################################################################################
 
+############################  DrawHVDependencePlots.cc  #########################################
+add_executable(DrawHVDependencePlots.exe DrawHVDependencePlots.cc)
+target_link_libraries(DrawHVDependencePlots.exe uRWellLib ${ROOT_LIBRARIES} )
+#################################################################################################
+
 
 ################################ Installing Executable targets #############################
-install( TARGETS SkimZeroSuppression.exe CheckDecoding.exe AnaClustering.exe
+install( TARGETS SkimZeroSuppression.exe CheckDecoding.exe AnaClustering.exe DrawHVDependencePlots.exe
   DESTINATION ${CMAKE_INSTALL_PREFIX}/bin )
 
 ################################ Installing Non target files ###############################
-install( FILES DrawPedestals.cc DrawPlotsWithClustering.cc
+install( FILES DrawPedestals.cc DrawPlotsWithClustering.cc DrawHVDependencePlots.cc
   DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
-
 
 ################################ Installing needed directores ##############################
 install( DIRECTORY
