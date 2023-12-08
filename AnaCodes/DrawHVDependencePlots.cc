@@ -17,7 +17,9 @@
 #include <TGraph.h>
 #include <TCanvas.h>
 #include <TLegend.h>
+#include <TEfficiency.h>
 #include <TMultiGraph.h>
+#include <TGraphAsymmErrors.h>
 
 #include <uRwellTools.h>
 
@@ -28,7 +30,7 @@ using namespace std;
  */
 int main() {
 
-    std::vector<int> v_runs = {1731, 1745, 1750, 1753, 1789, 1761, 1779};
+    std::vector<int> v_runs = {1731, 1745, 1750, 1753, 1790, 1761, 1779};
     std::map<int, double> m_MESH_HV; // The key is the run number, the value is the MESH_HV
     std::map<int, double> m_Cathode_HV; // The key is the run number, the value is the Cathode_HV
 
@@ -38,23 +40,23 @@ int main() {
     c1->SetGridy();
     c1->SetGridx();
 
-    TGraph *gr_Eff_U = new TGraph();
+    TGraphAsymmErrors *gr_Eff_U = new TGraphAsymmErrors();
     gr_Eff_U->SetMarkerStyle(20);
     gr_Eff_U->SetMarkerColor(2);
     gr_Eff_U->SetMarkerSize(2);
-    TGraph *gr_Eff_V = new TGraph();
+    TGraphAsymmErrors *gr_Eff_V = new TGraphAsymmErrors();
     gr_Eff_V->SetMarkerStyle(21);
     gr_Eff_V->SetMarkerColor(4);
     gr_Eff_V->SetMarkerSize(2);
-    TGraph *gr_Eff_OR = new TGraph();
+    TGraphAsymmErrors *gr_Eff_OR = new TGraphAsymmErrors();
     gr_Eff_OR->SetMarkerStyle(22);
     gr_Eff_OR->SetMarkerColor(6);
     gr_Eff_OR->SetMarkerSize(2);
-    TGraph *gr_Eff_AND = new TGraph();
+    TGraphAsymmErrors *gr_Eff_AND = new TGraphAsymmErrors();
     gr_Eff_AND->SetMarkerStyle(23);
     gr_Eff_AND->SetMarkerColor(7);
     gr_Eff_AND->SetMarkerSize(2);
-    TGraph *gr_Eff_CrsBgrSubtr = new TGraph();
+    TGraphAsymmErrors *gr_Eff_CrsBgrSubtr = new TGraphAsymmErrors();
     gr_Eff_CrsBgrSubtr->SetMarkerStyle(24);
     gr_Eff_CrsBgrSubtr->SetMarkerColor(8);
     gr_Eff_CrsBgrSubtr->SetMarkerSize(2);
@@ -90,24 +92,36 @@ int main() {
 
 
         double eff_U, eff_V, eff_OR, eff_AND, eff_BgrSubtr;
+        uRwellTools::uRwellEff eff;
+                
         TFile *file_in = new TFile(Form("AnaClustering_%d_Thr_%1.1f_MinHits_%d.root", run, threshold, MinHits));
 
         TH2D *h_n_uRwell_V_vs_U_MultiHitCl = (TH2D*) file_in->Get("h_n_uRwell_V_vs_U_MultiHitCl");
         double All_GoodEventts = h_n_uRwell_V_vs_U_MultiHitCl->Integral();
 
-        uRwellTools::CalcEfficiencies(h_n_uRwell_V_vs_U_MultiHitCl, eff_U, eff_V, eff_OR, eff_AND);
+        uRwellTools::CalcEfficiencies(h_n_uRwell_V_vs_U_MultiHitCl, eff);
 
         TH2D *h_Cross_YXc2 = (TH2D*) file_in->Get("h_Cross_YXc2");
 
         double n_CrossBgrSubtracted = uRwellTools::getNofBgrSbtrCrosses(h_Cross_YXc2);
 
-        eff_BgrSubtr = 100. * n_CrossBgrSubtracted / All_GoodEventts;
+        eff.eff_crs_BgrSubtr = 100. * n_CrossBgrSubtracted / All_GoodEventts;
 
-        gr_Eff_U->SetPoint(i, m_MESH_HV[run], eff_U);
-        gr_Eff_V->SetPoint(i, m_MESH_HV[run], eff_V);
-        gr_Eff_OR->SetPoint(i, m_MESH_HV[run], eff_OR);
-        gr_Eff_AND->SetPoint(i, m_MESH_HV[run], eff_AND);
-        gr_Eff_CrsBgrSubtr->SetPoint(i, m_MESH_HV[run], eff_BgrSubtr);
+        gr_Eff_U->SetPoint(i, m_MESH_HV[run], eff.eff_U);
+        gr_Eff_U->SetPointError(i, 0., 0., eff.errLow_eff_U, eff.errUp_eff_U );
+        gr_Eff_V->SetPoint(i, m_MESH_HV[run], eff.eff_V);
+        gr_Eff_U->SetPointError(i, 0., 0., eff.errLow_eff_V, eff.errUp_eff_V );
+        gr_Eff_OR->SetPoint(i, m_MESH_HV[run], eff.eff_OR);
+        gr_Eff_U->SetPointError(i, 0., 0., eff.errLow_eff_OR, eff.errUp_eff_OR );
+        gr_Eff_AND->SetPoint(i, m_MESH_HV[run], eff.eff_AND);
+        gr_Eff_U->SetPointError(i, 0., 0., eff.errLow_eff_AND, eff.errUp_eff_AND );
+        
+        eff.errUp_eff_crs_BgrSubtr = 100*TEfficiency::ClopperPearson(All_GoodEventts, n_CrossBgrSubtracted,   uRwellTools::OneSigma,  true) - eff.eff_crs_BgrSubtr ;
+        eff.errLow_eff_crs_BgrSubtr = eff.eff_crs_BgrSubtr - 100*TEfficiency::ClopperPearson(All_GoodEventts, n_CrossBgrSubtracted,   uRwellTools::OneSigma,  false);
+        gr_Eff_CrsBgrSubtr->SetPoint(i, m_MESH_HV[run], eff.eff_crs_BgrSubtr);
+        gr_Eff_CrsBgrSubtr->SetPointError(i, 0., 0., eff.errLow_eff_crs_BgrSubtr, eff.errUp_eff_crs_BgrSubtr);
+        
+        //cout<<eff.errLow_eff_U<<"  "<<eff.errUp_eff_U<<endl;
 
         delete h_Cross_YXc2;
         delete h_n_uRwell_V_vs_U_MultiHitCl;

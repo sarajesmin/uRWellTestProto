@@ -24,7 +24,30 @@ namespace uRwellTools {
         int ts;
         int slot;
     };
+    
+    /*
+     * This object contains different uRwell related efficiencies, and associated uncertainties
+     */
+    struct uRwellEff{
+    
+        double eff_U;  // Efficiency of at least one U cluster
+        double eff_V;  // Efficiency of at least one V cluster
+        double eff_OR; // Efficiency of any cluster
+        double eff_AND; // Efficiency of U AND V cluster to be present together
+        double eff_crs_BgrSubtr; // Efficiency of background sutracted UxV cross
+        double errUp_eff_U;  // Upper Error on eff_U
+        double errUp_eff_V;  // Upper Error on eff_V
+        double errUp_eff_OR; // Upper Error on eff_OR
+        double errUp_eff_AND;// Upper Error on eff_AND
+        double errUp_eff_crs_BgrSubtr; // Upper Error on eff_crs_BgrSubtr
+        double errLow_eff_U;  // Lower Error on eff_U
+        double errLow_eff_V;  // Lower Error on eff_V
+        double errLow_eff_OR; // Lower Error on eff_OR
+        double errLow_eff_AND;// Lower Error on eff_AND
+        double errLow_eff_crs_BgrSubtr; // Lower Error on eff_crs_BgrSubtr
+    };
 
+    const double OneSigma = 0.683;
     
     const int clStripGap = 2; // The Max length of the gap in between strips with a given cluster 
     int getSlot(int ch);
@@ -41,13 +64,11 @@ namespace uRwellTools {
     const double uRwell_XBot = 510.;
 
     /*
-     * This function takes the h_in histogram as a first argument, following arguments are addresses of different 
-     * efficiencies. It will calculates these efficiencies and write to corresponding addresses.
-     * the "h_in" histogram is just the "number of V bv number of U" clusters.
-     * eff_U is the efficiency of U cluster, eff_V is the efficiency of the V cluster, eff_OR is efficiency of "Any cluster", 
-     * and eff_AND is the efficiency of having at least 1U and 1 V cluster
+     * This function takes the h_in histogram as a first argument, and the 2nd argument is and addresses of uRwellEff 
+     * object. It will calculates these efficiencies and write to corresponding addresses.
+     * the "h_in" histogram is just the "number of V vs number of U" clusters.
      */
-    void CalcEfficiencies( TH2* h_in, double &eff_U, double &eff_V, double &eff_OR, double &eff_AND );
+    void CalcEfficiencies( TH2* h_in, uRwellEff &eff );
     
     /**
      * This function takes the h_in histogram as an input. It assumes the h_in histogram

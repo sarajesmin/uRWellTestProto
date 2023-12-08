@@ -1,6 +1,7 @@
 #include <uRwellTools.h>
 #include <algorithm>
 #include <iostream>
+#include <TEfficiency.h>
 
 using namespace std;
 
@@ -38,7 +39,7 @@ int uRwellTools::getSlot(int ch) {
 
 int uRwellTools::slot_Offset[uRwellTools::nSlot] = {0, 64, 192, 1448, 320, 1576, 1000, 1064, 1192, 448, 1320, 576};
 
-void uRwellTools::CalcEfficiencies(TH2* h_in, double &eff_U, double &eff_V, double &eff_OR, double &eff_AND) {
+void uRwellTools::CalcEfficiencies(TH2* h_in, uRwellTools::uRwellEff &eff) {
     int binx1 = h_in->GetXaxis()->FindBin(1);
     int binx2 = h_in->GetNbinsX() + 1;
     int biny1 = h_in->GetYaxis()->FindBin(1);
@@ -49,10 +50,21 @@ void uRwellTools::CalcEfficiencies(TH2* h_in, double &eff_U, double &eff_V, doub
     double counts_has_AnyCluster = h_in->Integral() - h_in->GetBinContent(1, 1);
     double counts_has_U_AND_V_Cluster = h_in->Integral(binx1, binx2, biny1, biny2);
 
-    eff_U = 100. * counts_has_U_Cluster / counts_integral;
-    eff_V = 100. * counts_has_V_Cluster / counts_integral;
-    eff_OR = 100. * counts_has_AnyCluster / counts_integral;
-    eff_AND = 100. * counts_has_U_AND_V_Cluster / counts_integral;
+    eff.eff_U = 100. * counts_has_U_Cluster / counts_integral;
+    eff.eff_V = 100. * counts_has_V_Cluster / counts_integral;
+    eff.eff_OR = 100. * counts_has_AnyCluster / counts_integral;
+    eff.eff_AND = 100. * counts_has_U_AND_V_Cluster / counts_integral;
+    
+    eff.errUp_eff_U  = 100*TEfficiency::ClopperPearson(counts_integral, counts_has_U_Cluster,   OneSigma,  true) - eff.eff_U ;
+    eff.errLow_eff_U = eff.eff_U - 100*TEfficiency::ClopperPearson(counts_integral, counts_has_U_Cluster, OneSigma,  false);
+    eff.errUp_eff_V  = 100*TEfficiency::ClopperPearson(counts_integral, counts_has_V_Cluster, OneSigma,  true) - eff.eff_V ;
+    eff.errLow_eff_V = eff.eff_V - 100*TEfficiency::ClopperPearson(counts_integral, counts_has_V_Cluster, OneSigma,  false);
+    eff.errUp_eff_OR  = 100*TEfficiency::ClopperPearson(counts_integral, counts_has_AnyCluster, OneSigma,  true) - eff.eff_OR;
+    eff.errLow_eff_OR = eff.eff_OR - 100*TEfficiency::ClopperPearson(counts_integral, counts_has_AnyCluster, OneSigma,  false);
+    eff.errUp_eff_AND  = 100*TEfficiency::ClopperPearson(counts_integral, counts_has_U_AND_V_Cluster, OneSigma,  true) - eff.eff_AND;
+    eff.errLow_eff_AND = eff.eff_AND - 100*TEfficiency::ClopperPearson(counts_integral, counts_has_U_AND_V_Cluster, OneSigma,  false);
+    
+    cout<<eff.errLow_eff_U<<" Kuku   "<<eff.errUp_eff_U<<"  "<<counts_integral<<"   "<<counts_has_U_Cluster<<endl;
 }
 
 double uRwellTools::getNofBgrSbtrCrosses(TH2* h_in) {
