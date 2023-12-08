@@ -39,9 +39,9 @@ int DrawPlotsWithClustering(int run, double threshold = 5, int MinClSize = 1) {
     lat1->DrawLatex(0.6, 0.8, "3#sigma cut");
     lat1->SetTextColor(2);
     lat1->DrawLatex(0.6, 0.7, "5#sigma cut");
-    c1->Print(Form("Figs/U_Strip_Distr1_%d.pdf", run));
-    c1->Print(Form("Figs/U_Strip_Distr1_%d.png", run));
-    c1->Print(Form("Figs/U_Strip_Distr1_%d.root", run));
+    c1->Print(Form("Figs/U_Strip_Distr1_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c1->Print(Form("Figs/U_Strip_Distr1_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c1->Print(Form("Figs/U_Strip_Distr1_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
 
     TH1D *h_V_HitStrip1 = (TH1D*) file_in->Get("h_V_HitStrip1");
     h_V_HitStrip1->SetTitle("; V strip number");
@@ -54,9 +54,9 @@ int DrawPlotsWithClustering(int run, double threshold = 5, int MinClSize = 1) {
     lat1->DrawLatex(0.6, 0.8, "3#sigma cut");
     lat1->SetTextColor(2);
     lat1->DrawLatex(0.6, 0.7, "5#sigma cut");
-    c1->Print(Form("Figs/V_Strip_Distr1_%d.pdf", run));
-    c1->Print(Form("Figs/V_Strip_Distr1_%d.png", run));
-    c1->Print(Form("Figs/V_Strip_Distr1_%d.root", run));
+    c1->Print(Form("Figs/V_Strip_Distr1_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c1->Print(Form("Figs/V_Strip_Distr1_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c1->Print(Form("Figs/V_Strip_Distr1_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
 
 
     TH1D *h_n_UclHits1 = (TH1D*) file_in->Get("h_n_UclHits1");
@@ -67,9 +67,9 @@ int DrawPlotsWithClustering(int run, double threshold = 5, int MinClSize = 1) {
     h_n_UclHits1->SetAxisRange(2, h_n_UclHits1->GetBinCenter(h_n_UclHits1->GetNbinsX()));
     h_n_UclHits1->GetXaxis()->SetNdivisions(716);
     h_n_UclHits1->Draw();
-    c1->Print(Form("Figs/N_Ucl_Hits_%d.pdf", run));
-    c1->Print(Form("Figs/N_Ucl_Hits_%d.png", run));
-    c1->Print(Form("Figs/N_Ucl_Hits_%d.root", run));
+    c1->Print(Form("Figs/N_Ucl_Hits_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c1->Print(Form("Figs/N_Ucl_Hits_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c1->Print(Form("Figs/N_Ucl_Hits_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
 
     TH1D *h_n_VclHits1 = (TH1D*) file_in->Get("h_n_VclHits1");
     h_n_VclHits1->SetLineWidth(2);
@@ -79,9 +79,9 @@ int DrawPlotsWithClustering(int run, double threshold = 5, int MinClSize = 1) {
     h_n_VclHits1->SetAxisRange(2, h_n_VclHits1->GetBinCenter(h_n_VclHits1->GetNbinsX()));
     h_n_VclHits1->GetXaxis()->SetNdivisions(716);
     h_n_VclHits1->Draw();
-    c1->Print(Form("Figs/N_Vcl_Hits_%d.pdf", run));
-    c1->Print(Form("Figs/N_Vcl_Hits_%d.png", run));
-    c1->Print(Form("Figs/N_Vcl_Hits_%d.root", run));
+    c1->Print(Form("Figs/N_Vcl_Hits_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c1->Print(Form("Figs/N_Vcl_Hits_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c1->Print(Form("Figs/N_Vcl_Hits_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
 
     TF1 *f_Landau = new TF1("f_Landau", "[0]*TMath::Landau(x, [1], [2])", 0., 1000.);
     f_Landau->SetNpx(4500);
@@ -94,9 +94,9 @@ int DrawPlotsWithClustering(int run, double threshold = 5, int MinClSize = 1) {
     f_Landau->SetParameters(5. * h_U_PeakADC_MultiCl1->GetMaximum(), h_U_PeakADC_MultiCl1->GetBinCenter(h_U_PeakADC_MultiCl1->GetMaximumBin()), 10);
     h_U_PeakADC_MultiCl1->Fit(f_Landau, "MeV", "", 0., adcMaxAxis);
     lat1->DrawLatex(0.5, 0.7, Form("MPV = %1.1f", f_Landau->GetParameter(1)));
-    c1->Print(Form("Figs/Peak_ADC_UStrips_%d.pdf", run));
-    c1->Print(Form("Figs/Peak_ADC_UStrips_%d.png", run));
-    c1->Print(Form("Figs/Peak_ADC_UStrips_%d.root", run));
+    c1->Print(Form("Figs/Peak_ADC_UStrips_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c1->Print(Form("Figs/Peak_ADC_UStrips_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c1->Print(Form("Figs/Peak_ADC_UStrips_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
 
     TH1D *h_V_PeakADC_MultiCl1 = (TH1D*) file_in->Get("h_V_PeakADC_MultiCl1");
     h_V_PeakADC_MultiCl1->SetLineWidth(2);
@@ -105,41 +105,41 @@ int DrawPlotsWithClustering(int run, double threshold = 5, int MinClSize = 1) {
     f_Landau->SetParameters(5. * h_V_PeakADC_MultiCl1->GetMaximum(), h_V_PeakADC_MultiCl1->GetBinCenter(h_V_PeakADC_MultiCl1->GetMaximumBin()), 2);
     h_V_PeakADC_MultiCl1->Fit(f_Landau, "MeV", "", 0., adcMaxAxis);
     lat1->DrawLatex(0.5, 0.7, Form("MPV = %1.1f", f_Landau->GetParameter(1)));
-    c1->Print(Form("Figs/Peak_ADC_VStrips_%d.pdf", run));
-    c1->Print(Form("Figs/Peak_ADC_VStrips_%d.png", run));
-    c1->Print(Form("Figs/Peak_ADC_VStrips_%d.root", run));
+    c1->Print(Form("Figs/Peak_ADC_VStrips_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c1->Print(Form("Figs/Peak_ADC_VStrips_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c1->Print(Form("Figs/Peak_ADC_VStrips_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
 
     TH1D *h_U_Coord_MultrCl1 = (TH1D*) file_in->Get("h_U_Coord_MultrCl1");
     h_U_Coord_MultrCl1->SetTitle("; Cluster U coordinate [strip]");
     h_U_Coord_MultrCl1->SetLineWidth(2);
     h_U_Coord_MultrCl1->Draw();
-    c1->Print(Form("Figs/cl_U_coordinate1_%d.pdf", run));
-    c1->Print(Form("Figs/cl_U_coordinate1_%d.png", run));
-    c1->Print(Form("Figs/cl_U_coordinate1_%d.root", run));
+    c1->Print(Form("Figs/cl_U_coordinate1_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c1->Print(Form("Figs/cl_U_coordinate1_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c1->Print(Form("Figs/cl_U_coordinate1_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
 
     TH1D *h_V_Coord_MultrCl1 = (TH1D*) file_in->Get("h_V_Coord_MultrCl1");
     h_V_Coord_MultrCl1->SetTitle("; Cluster V coordinate [strip]");
     h_V_Coord_MultrCl1->SetLineWidth(2);
     h_V_Coord_MultrCl1->Draw();
-    c1->Print(Form("Figs/cl_V_coordinate1_%d.pdf", run));
-    c1->Print(Form("Figs/cl_V_coordinate1_%d.png", run));
-    c1->Print(Form("Figs/cl_V_coordinate1_%d.root", run));
+    c1->Print(Form("Figs/cl_V_coordinate1_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c1->Print(Form("Figs/cl_V_coordinate1_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c1->Print(Form("Figs/cl_V_coordinate1_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
 
     TH1D *h_U_Coord_MultrCl2 = (TH1D*) file_in->Get("h_U_Coord_MultrCl2");
     h_U_Coord_MultrCl2->SetTitle("; Cluster U coordinate [strip]");
     h_U_Coord_MultrCl2->SetLineWidth(2);
     h_U_Coord_MultrCl2->Draw();
-    c1->Print(Form("Figs/cl_U_coordinate2_%d.pdf", run));
-    c1->Print(Form("Figs/cl_U_coordinate2_%d.png", run));
-    c1->Print(Form("Figs/cl_U_coordinate2_%d.root", run));
+    c1->Print(Form("Figs/cl_U_coordinate2_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c1->Print(Form("Figs/cl_U_coordinate2_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c1->Print(Form("Figs/cl_U_coordinate2_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
 
     TH1D *h_V_Coord_MultrCl2 = (TH1D*) file_in->Get("h_V_Coord_MultrCl2");
     h_V_Coord_MultrCl2->SetTitle("; Cluster V coordinate [strip]");
     h_V_Coord_MultrCl2->SetLineWidth(2);
     h_V_Coord_MultrCl2->Draw();
-    c1->Print(Form("Figs/cl_V_coordinate2_%d.pdf", run));
-    c1->Print(Form("Figs/cl_V_coordinate2_%d.png", run));
-    c1->Print(Form("Figs/cl_V_coordinate2_%d.root", run));
+    c1->Print(Form("Figs/cl_V_coordinate2_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c1->Print(Form("Figs/cl_V_coordinate2_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c1->Print(Form("Figs/cl_V_coordinate2_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
 
 
     c1->SetLogz();
@@ -148,16 +148,16 @@ int DrawPlotsWithClustering(int run, double threshold = 5, int MinClSize = 1) {
     h_n_GEM_Y_vs_X_Hits1->Draw("colz");
     line1->DrawLine(1.5, 1.5, 1.5, 20.);
     line1->DrawLine(1.5, 1.5, 20., 1.5);
-    c1->Print(Form("Figs/GEM_N_Y_vs_X_Hits1_%d.pdf", run));
-    c1->Print(Form("Figs/GEM_N_Y_vs_X_Hits1_%d.png", run));
-    c1->Print(Form("Figs/GEM_N_Y_vs_X_Hits1_%d.root", run));
+    c1->Print(Form("Figs/GEM_N_Y_vs_X_Hits1_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c1->Print(Form("Figs/GEM_N_Y_vs_X_Hits1_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c1->Print(Form("Figs/GEM_N_Y_vs_X_Hits1_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
 
     TH2D *h_GEM_XY1 = (TH2D*) file_in->Get("h_GEM_XY1");
     h_GEM_XY1->SetTitle("; GEM X Strip; GEM Y Strip");
     h_GEM_XY1->Draw("colz");
-    c1->Print(Form("Figs/GEM_Y_vs_X_Strips_%d.pdf", run));
-    c1->Print(Form("Figs/GEM_Y_vs_X_Strips_%d.png", run));
-    c1->Print(Form("Figs/GEM_Y_vs_X_Strips_%d.root", run));
+    c1->Print(Form("Figs/GEM_Y_vs_X_Strips_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c1->Print(Form("Figs/GEM_Y_vs_X_Strips_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c1->Print(Form("Figs/GEM_Y_vs_X_Strips_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
 
     TH2D *h_n_uRwell_V_vs_U_MultiHitCl = (TH2D*) file_in->Get("h_n_uRwell_V_vs_U_MultiHitCl");
     h_n_uRwell_V_vs_U_MultiHitCl->SetTitle("; Number of U clusters; umber of V clusters");
@@ -188,9 +188,9 @@ int DrawPlotsWithClustering(int run, double threshold = 5, int MinClSize = 1) {
     h_Cross_YXc2->SetTitle("; Cross X coordinate [mm]; Cross Y coordinate [mm]");
     h_Cross_YXc2->Draw("col");
     DrawActiveArea();
-    c2->Print(Form("Figs/Cross_YXc2_%d.pdf", run));
-    c2->Print(Form("Figs/Cross_YXc2_%d.png", run));
-    c2->Print(Form("Figs/Cross_YXc2_%d.root", run));
+    c2->Print(Form("Figs/Cross_YXc2_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c2->Print(Form("Figs/Cross_YXc2_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c2->Print(Form("Figs/Cross_YXc2_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
 
     TF1 *f_Gaus = new TF1("f_Gaus", "[0]*TMath::Gaus(x, [1], [2])", -900., 900.);
     f_Gaus->SetNpx(4500);
@@ -210,15 +210,15 @@ int DrawPlotsWithClustering(int run, double threshold = 5, int MinClSize = 1) {
     f_Pol4->SetParameters(&pars[3]);
     f_Pol4->Draw("Same");
     double N_Cross_BgrSubtr = f_Gaus->Integral(-800., 800.) / h_Cross_X2->GetBinWidth(15);
-    c2->Print(Form("Figs/Cross_X2_Fit_%d.pdf", run));
-    c2->Print(Form("Figs/Cross_X2_Fit_%d.png", run));
-    c2->Print(Form("Figs/Cross_X2_Fit_%d.root", run));
+    c2->Print(Form("Figs/Cross_X2_Fit_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c2->Print(Form("Figs/Cross_X2_Fit_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c2->Print(Form("Figs/Cross_X2_Fit_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
 
     c1->cd();
     lat1->DrawLatex(0.15, 0.7, Form("Has Cross BgrSubtr = %d #rightarrow %1.2f %% ", int(N_Cross_BgrSubtr), 100. * double(N_Cross_BgrSubtr) / counts_integral));
-    c1->Print(Form("Figs/Number_OF_V_vs_U_clusters_%d.pdf", run));
-    c1->Print(Form("Figs/Number_OF_V_vs_U_clusters_%d.png", run));
-    c1->Print(Form("Figs/Number_OF_V_vs_U_clusters_%d.root", run));
+    c1->Print(Form("Figs/Number_OF_V_vs_U_clusters_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c1->Print(Form("Figs/Number_OF_V_vs_U_clusters_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c1->Print(Form("Figs/Number_OF_V_vs_U_clusters_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
 
 
 
