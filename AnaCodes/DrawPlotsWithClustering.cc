@@ -6,15 +6,65 @@
  */
 
 #include <cstdlib>
+#include <cxxopts.hpp>
 
+#include <TF1.h>
+#include <TH1D.h>
+#include <TH2D.h>
+#include <TFile.h>
+#include <TLine.h>
+#include <TLatex.h>
+#include <TCanvas.h>
+
+#include <uRwellTools.h>
 using namespace std;
+
 
 void DrawActiveArea();
 
 /*
  * 
  */
-int DrawPlotsWithClustering(int run, double threshold = 5, int MinClSize = 1) {
+int main(int argc, char **argv) {
+
+    cxxopts::Options options("AnaClustering", "Performs clustering and also does analysis on cosmic data");
+
+    options.add_options()
+            ("r,Run", "Run number", cxxopts::value<int>())
+            ("t,Threshold", "Hit Threshold in terms of sigma", cxxopts::value<double>()->default_value("5"))
+            ("m,MinHits", "Number of minimum hits in the cluster", cxxopts::value<int>()->default_value("1"))
+            //("f,File", "File number of the given run", cxxopts::value<int>())
+            ;
+
+    auto parsed_options = options.parse(argc, argv);
+
+    int run = 0;
+    int fnum = -1;
+
+
+    if (parsed_options.count("Run")) {
+        run = parsed_options["Run"].as<int>();
+    } else {
+        cout << "The run number is nor provided. Exiting..." << endl;
+        exit(1);
+    }
+
+
+    const double threshold = parsed_options["Threshold"].as<double>();
+    if (!parsed_options.count("Threshold")) {
+        cout << "* You didn't provide the hit threshold. Exitint" << endl;
+        exit(1);
+    }
+
+    const int MinClSize = parsed_options["MinHits"].as<int>();
+    if (!parsed_options.count("MinHits")) {
+        cout << "* You didn't provide the Minimum hits int the cluster. Exiting " << endl;
+        exit(1);
+    }
+
+    cout << "The hit threshold is " << threshold << "\\sigma" << endl;
+    cout << "The Minimum cluster size is " << MinClSize << "hits" << endl;
+
 
     TCanvas *c1 = new TCanvas("c1", "", 950, 950);
     c1->SetTopMargin(0.04);
@@ -231,7 +281,7 @@ int DrawPlotsWithClustering(int run, double threshold = 5, int MinClSize = 1) {
     h_Cross_YXc1->SetTitleOffset(0.9, "Y");
     h_Cross_YXc1->SetTitleSize(0.05, "X");
     h_Cross_YXc1->SetLabelSize(0.05, "X");
-    h_Cross_YXc1->SetMaximum(20);
+    h_Cross_YXc1->SetMaximum(40);
     h_Cross_YXc1->SetMinimum(3);
     h_Cross_YXc1->Draw("col");
     DrawActiveArea();
@@ -239,7 +289,7 @@ int DrawPlotsWithClustering(int run, double threshold = 5, int MinClSize = 1) {
     c2->Print(Form("Figs/Cross_YXc1_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_YXc1_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
 
-    
+
     TH2D *h_Cross_YXc3 = (TH2D*) file_in->Get("h_Cross_YXc3");
     h_Cross_YXc3->SetStats(0);
     h_Cross_YXc3->SetTitle("; Cross X coordinate [mm]; Cross Y coordinate [mm]");
@@ -249,7 +299,8 @@ int DrawPlotsWithClustering(int run, double threshold = 5, int MinClSize = 1) {
     h_Cross_YXc3->SetTitleSize(0.05, "X");
     h_Cross_YXc3->SetLabelSize(0.05, "X");
     h_Cross_YXc3->Draw("col");
-    h_Cross_YXc3->SetMaximum(20);
+    h_Cross_YXc3->SetMaximum(40);
+    uRwellTools::DrawGroupStripBiundaries();
     c2->Print(Form("Figs/Cross_YXc3_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_YXc3_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_YXc3_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
@@ -273,6 +324,8 @@ int DrawPlotsWithClustering(int run, double threshold = 5, int MinClSize = 1) {
     h_Cross_X3->SetLabelSize(0.05, "Y");
     c2->SetGridy();
     c2->SetGridx();
+    c2->Modified();
+    c2->Update();
     c2->Print(Form("Figs/Cross_X3_%d_%1.1f_%d_ZoomedOnX.pdf", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_X3_%d_%1.1f_%d_ZoomedOnX.png", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_X3_%d_%1.1f_%d_ZoomedOnX.root", run, threshold, MinClSize));
