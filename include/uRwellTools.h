@@ -9,8 +9,9 @@
 #define URWELLTOOLS_H
 #include <vector>
 #include <cmath>
-#include <TH2D.h>
 #include <TF1.h>
+#include <TH2D.h>
+#include <TCanvas.h>
 
 namespace uRwellTools {
 
@@ -54,9 +55,15 @@ namespace uRwellTools {
     const int nSlot = 12; // The test Prototype has only 12 slots
     extern int slot_Offset[nSlot]; // Gives the 1st strip channel (unique channel) for the given slot
     
+    const double Y_top_edge = 250;
+    const double Y_bot_edge = -250;
+    const double X_top_edge = 723;
+    const double X_bot_edge = 506.14;
+    
     const double strip_alpha = 10. * 0.017453293; // The strip angle in radians
-    const double Y_0 = 250 + 723 * tan(strip_alpha);
+    const double Y_0 = 250 + X_top_edge * tan(strip_alpha); // This is the Y coordinate of the 1st strip (U or V should be the same) when the X 0. In other words this is the offset of the 1st strip
     const double pitch = 1.; // mm
+    
     
     const double uRWell_Y_max = 250.; // mm
     const double uRWell_Y_min = -250.; // mm
@@ -82,6 +89,19 @@ namespace uRwellTools {
      * This assumes idealized geometry, and checks are based on variables uRWell_Y_max, uRWell_Y_min, uRwell_XTop, uRwell_XBot
      */
     bool IsInsideDetector( double x, double y );
+    
+    
+    /**
+     *       _______________________________
+     *       \                             /
+     *        \                           /
+     *         \                         /
+     *          \                       /
+     *           \                     /
+     *            ---------------------
+     */
+    
+    void DrawGroupStripBiundaries();
     
     class uRwellCluster {
     public:

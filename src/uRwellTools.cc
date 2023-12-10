@@ -1,6 +1,9 @@
-#include <uRwellTools.h>
-#include <algorithm>
 #include <iostream>
+#include <algorithm>
+#include <uRwellTools.h>
+
+#include <TLine.h>
+#include <TCanvas.h>
 #include <TEfficiency.h>
 
 using namespace std;
@@ -54,17 +57,17 @@ void uRwellTools::CalcEfficiencies(TH2* h_in, uRwellTools::uRwellEff &eff) {
     eff.eff_V = 100. * counts_has_V_Cluster / counts_integral;
     eff.eff_OR = 100. * counts_has_AnyCluster / counts_integral;
     eff.eff_AND = 100. * counts_has_U_AND_V_Cluster / counts_integral;
-    
-    eff.errUp_eff_U  = 100*TEfficiency::ClopperPearson(counts_integral, counts_has_U_Cluster,   OneSigma,  true) - eff.eff_U ;
-    eff.errLow_eff_U = eff.eff_U - 100*TEfficiency::ClopperPearson(counts_integral, counts_has_U_Cluster, OneSigma,  false);
-    eff.errUp_eff_V  = 100*TEfficiency::ClopperPearson(counts_integral, counts_has_V_Cluster, OneSigma,  true) - eff.eff_V ;
-    eff.errLow_eff_V = eff.eff_V - 100*TEfficiency::ClopperPearson(counts_integral, counts_has_V_Cluster, OneSigma,  false);
-    eff.errUp_eff_OR  = 100*TEfficiency::ClopperPearson(counts_integral, counts_has_AnyCluster, OneSigma,  true) - eff.eff_OR;
-    eff.errLow_eff_OR = eff.eff_OR - 100*TEfficiency::ClopperPearson(counts_integral, counts_has_AnyCluster, OneSigma,  false);
-    eff.errUp_eff_AND  = 100*TEfficiency::ClopperPearson(counts_integral, counts_has_U_AND_V_Cluster, OneSigma,  true) - eff.eff_AND;
-    eff.errLow_eff_AND = eff.eff_AND - 100*TEfficiency::ClopperPearson(counts_integral, counts_has_U_AND_V_Cluster, OneSigma,  false);
-    
-    cout<<eff.errLow_eff_U<<" Kuku   "<<eff.errUp_eff_U<<"  "<<counts_integral<<"   "<<counts_has_U_Cluster<<endl;
+
+    eff.errUp_eff_U = 100 * TEfficiency::ClopperPearson(counts_integral, counts_has_U_Cluster, OneSigma, true) - eff.eff_U;
+    eff.errLow_eff_U = eff.eff_U - 100 * TEfficiency::ClopperPearson(counts_integral, counts_has_U_Cluster, OneSigma, false);
+    eff.errUp_eff_V = 100 * TEfficiency::ClopperPearson(counts_integral, counts_has_V_Cluster, OneSigma, true) - eff.eff_V;
+    eff.errLow_eff_V = eff.eff_V - 100 * TEfficiency::ClopperPearson(counts_integral, counts_has_V_Cluster, OneSigma, false);
+    eff.errUp_eff_OR = 100 * TEfficiency::ClopperPearson(counts_integral, counts_has_AnyCluster, OneSigma, true) - eff.eff_OR;
+    eff.errLow_eff_OR = eff.eff_OR - 100 * TEfficiency::ClopperPearson(counts_integral, counts_has_AnyCluster, OneSigma, false);
+    eff.errUp_eff_AND = 100 * TEfficiency::ClopperPearson(counts_integral, counts_has_U_AND_V_Cluster, OneSigma, true) - eff.eff_AND;
+    eff.errLow_eff_AND = eff.eff_AND - 100 * TEfficiency::ClopperPearson(counts_integral, counts_has_U_AND_V_Cluster, OneSigma, false);
+
+    cout << eff.errLow_eff_U << " Kuku   " << eff.errUp_eff_U << "  " << counts_integral << "   " << counts_has_U_Cluster << endl;
 }
 
 double uRwellTools::getNofBgrSbtrCrosses(TH2* h_in) {
@@ -93,8 +96,70 @@ double uRwellTools::getNofBgrSbtrCrosses(TH2* h_in) {
 
 bool uRwellTools::IsInsideDetector(double x, double y) {
     return y > uRWell_Y_min && y < uRWell_Y_max &&
-            y > (uRWell_Y_min + (x - uRwell_XBot)*(uRWell_Y_max - uRWell_Y_min) / (uRwell_XTop - uRwell_XBot) ) && 
-            y > (uRWell_Y_min + (x + uRwell_XBot)*(uRWell_Y_max - uRWell_Y_min) / (uRwell_XBot - uRwell_XTop) );
+            y > (uRWell_Y_min + (x - uRwell_XBot)*(uRWell_Y_max - uRWell_Y_min) / (uRwell_XTop - uRwell_XBot)) &&
+            y > (uRWell_Y_min + (x + uRwell_XBot)*(uRWell_Y_max - uRWell_Y_min) / (uRwell_XBot - uRwell_XTop));
+}
+
+void uRwellTools::DrawGroupStripBiundaries() {
+    const int n_UBounderies = 3;
+    const int n_VBounderies = 3;
+
+    double U_bounderies[n_UBounderies] = {64.5, 320.5, 448.5};
+    double V_bounderies[n_VBounderies] = {64.5, 320.5, 448.5};
+
+    // Lets define the line for the left and right side, i.e. "a" and "b" of y = ax+b
+    double a_left = (Y_top_edge - Y_bot_edge) / (X_bot_edge - X_top_edge);
+    double b_left = Y_bot_edge + a_left*X_bot_edge;
+
+    double a_right = (Y_top_edge - Y_bot_edge) / (X_top_edge - X_bot_edge);
+    double b_right = Y_bot_edge - a_right*X_bot_edge;
+
+    TLine *line1 = new TLine();
+
+    // ============ Let's draw U lines =============
+    line1->SetLineColor(2);
+    for (int i = 0; i < n_UBounderies; i++) {
+
+        // x1 and y1 are the intersection of the strip and the left side of the uRwell
+        double x1 = (b_left - Y_0 + (U_bounderies[i] * pitch) / cos(strip_alpha)) / (tan(strip_alpha) - a_left);
+        double y1 = a_left * x1 + b_left;
+
+        // x2 and y2 are the intersection coordinates of the strip and either the Top base or the right side, whichever intersects first
+
+        // First we check the crossing with the top base
+        double x2 = (Y_top_edge - Y_0 + (U_bounderies[i] * pitch)) / tan(strip_alpha);
+        double y2 = Y_top_edge;
+
+        if (x2 > X_top_edge) {
+            //  This means the strip doesn't reach the top boundary, but crosses the right side.
+            x2 = (b_right - Y_0 + (U_bounderies[i] * pitch) / cos(strip_alpha))/( tan(strip_alpha) - a_right );
+            y2 = a_right*x2 + b_right;            
+        }
+        line1->DrawLine(x1, y1, x2, y2);
+    }
+
+
+    // ============ Let's draw V lines =============
+    line1->SetLineColor(4);
+    for (int i = 0; i < n_VBounderies; i++) {
+
+        // x1 and y1 are the intersection of the strip and the left side of the uRwell
+        double x1 = (b_right - Y_0 + (V_bounderies[i] * pitch) / cos(-strip_alpha)) / (tan(-strip_alpha) - a_right);
+        double y1 = a_right * x1 + b_right;
+
+        // x2 and y2 are the intersection coordinates of the strip and either the Top base or the right side, whichever intersects first
+
+        // First we check the crossing with the top base
+        double x2 = (Y_top_edge - Y_0 + (V_bounderies[i] * pitch)) / tan(-strip_alpha);
+        double y2 = Y_top_edge;
+
+        if (x2 < -X_top_edge) {
+            //  This means the strip doesn't reach the top boundary, but crosses the right side.
+            x2 = (b_left - Y_0 + (V_bounderies[i] * pitch) / cos(-strip_alpha))/( tan(-strip_alpha) - a_left );
+            y2 = a_left*x2 + b_left;
+        }
+        line1->DrawLine(x1, y1, x2, y2);
+    }
 }
 
 namespace uRwellTools {

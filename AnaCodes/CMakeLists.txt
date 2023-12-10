@@ -22,6 +22,11 @@ add_executable(AnaClustering.exe AnaClustering.cc)
 target_link_libraries(AnaClustering.exe Hipo4 uRWellLib ${ROOT_LIBRARIES} )
 #################################################################################################
 
+############################  DrawPlotsWithClustering.cc  #######################################
+add_executable(DrawPlotsWithClustering.exe DrawPlotsWithClustering.cc )
+target_link_libraries(DrawPlotsWithClustering.exe uRWellLib ${ROOT_LIBRARIES} )
+#################################################################################################
+
 ############################  DrawHVDependencePlots.cc  #########################################
 add_executable(DrawHVDependencePlots.exe DrawHVDependencePlots.cc)
 target_link_libraries(DrawHVDependencePlots.exe uRWellLib ${ROOT_LIBRARIES} )
@@ -29,11 +34,11 @@ target_link_libraries(DrawHVDependencePlots.exe uRWellLib ${ROOT_LIBRARIES} )
 
 
 ################################ Installing Executable targets #############################
-install( TARGETS SkimZeroSuppression.exe CheckDecoding.exe AnaClustering.exe DrawHVDependencePlots.exe
+install( TARGETS SkimZeroSuppression.exe CheckDecoding.exe AnaClustering.exe DrawHVDependencePlots.exe DrawPlotsWithClustering.exe
   DESTINATION ${CMAKE_INSTALL_PREFIX}/bin )
 
 ################################ Installing Non target files ###############################
-install( FILES DrawPedestals.cc DrawPlotsWithClustering.cc DrawHVDependencePlots.cc
+install( FILES DrawPedestals.cc
   DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 
 ################################ Installing needed directores ##############################
