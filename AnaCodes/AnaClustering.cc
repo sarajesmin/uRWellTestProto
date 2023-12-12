@@ -129,6 +129,9 @@ int main(int argc, char** argv) {
     TH2D h_Cross_YXc1("h_Cross_YXc1", "", 1000, -900., 900., 200, -500., 500.);
     TH2D h_Cross_YXc2("h_Cross_YXc2", "", 200, -900., 900., 200, -500., 500.);
     TH2D h_Cross_YXc3("h_Cross_YXc3", "", 1000, -900., 900., 200, -500., 500.);
+    TH2D h_Cross_YXc_Weighted1("h_Cross_YXc_Weighted1", "", 1000, -900., 900., 200, -500., 500.);
+    TH2D h_Cross_YXc_Weighted2("h_Cross_YXc_Weighted2", "", 1000, -900., 900., 200, -500., 500.);
+    TH2D h_Cross_YXc_Weighted3("h_Cross_YXc_Weighted3", "", 1000, -900., 900., 200, -500., 500.);
 
     TH2D h_GEM_XY1("h_GEM_XY1", "", 129, -0.5, 128.5, 129, -0.5, 128.5);
 
@@ -348,17 +351,25 @@ int main(int argc, char** argv) {
                     double cl_Strip_U = cur_Ucl.getAvgStrip();
                     double cl_Strip_V = cur_Vcl.getAvgStrip();
 
+                    double cl_ADC_U = cur_Ucl.getPeakADC();
+                    double cl_ADC_V = cur_Vcl.getPeakADC();
+
+                    double cl_ADC_Tot = cl_ADC_U + cl_ADC_V;
+
                     double crsX = getCrossX(cl_Strip_U, cl_Strip_V);
                     double crsY = getCrossY(cl_Strip_U, cl_Strip_V);
 
                     h_Cross_YXc1.Fill(crsX, crsY);
-                    
+                    h_Cross_YXc_Weighted1.Fill(crsX, crsY, cl_ADC_Tot);
+
                     if (uRwellTools::IsInsideDetector(crsX, crsY)) {
                         h_Cross_YXc3.Fill(crsX, crsY);
+                        h_Cross_YXc_Weighted3.Fill(crsX, crsY, cl_ADC_Tot);
                     }
 
                     if (n_GEMHits_X >= 2 && n_GEMHits_Y >= 2) {
                         h_Cross_YXc2.Fill(crsX, crsY);
+                        h_Cross_YXc_Weighted2.Fill(crsX, crsY, cl_ADC_Tot);
                     }
                 }
 

@@ -14,6 +14,7 @@
 #include <TFile.h>
 #include <TLine.h>
 #include <TLatex.h>
+#include <TLegend.h>
 #include <TCanvas.h>
 
 #include <uRwellTools.h>
@@ -281,7 +282,7 @@ int main(int argc, char **argv) {
     h_Cross_YXc1->SetTitleOffset(0.9, "Y");
     h_Cross_YXc1->SetTitleSize(0.05, "X");
     h_Cross_YXc1->SetLabelSize(0.05, "X");
-    h_Cross_YXc1->SetMaximum(40);
+    h_Cross_YXc1->SetMaximum(h_Cross_YXc1->GetMaximum() / 5.);
     h_Cross_YXc1->SetMinimum(3);
     h_Cross_YXc1->Draw("col");
     DrawActiveArea();
@@ -299,7 +300,7 @@ int main(int argc, char **argv) {
     h_Cross_YXc3->SetTitleSize(0.05, "X");
     h_Cross_YXc3->SetLabelSize(0.05, "X");
     h_Cross_YXc3->Draw("col");
-    h_Cross_YXc3->SetMaximum(40);
+    h_Cross_YXc3->SetMaximum(h_Cross_YXc3->GetMaximum() / 5.);
     uRwellTools::DrawGroupStripBiundaries();
     c2->Print(Form("Figs/Cross_YXc3_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_YXc3_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
@@ -330,6 +331,44 @@ int main(int argc, char **argv) {
     c2->Print(Form("Figs/Cross_X3_%d_%1.1f_%d_ZoomedOnX.png", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_X3_%d_%1.1f_%d_ZoomedOnX.root", run, threshold, MinClSize));
 
+
+    TH2D *h_Cross_YXc_Weighted3 = (TH2D*) file_in->Get("h_Cross_YXc_Weighted3");
+    h_Cross_YXc_Weighted3->SetStats(0);
+    h_Cross_YXc_Weighted3->SetTitle("; Cross X coordinate [mm]; Cross Y coordinate [mm]");
+    h_Cross_YXc_Weighted3->SetTitleSize(0.05, "Y");
+    h_Cross_YXc_Weighted3->SetLabelSize(0.05, "Y");
+    h_Cross_YXc_Weighted3->SetTitleOffset(0.9, "Y");
+    h_Cross_YXc_Weighted3->SetTitleSize(0.05, "X");
+    h_Cross_YXc_Weighted3->SetLabelSize(0.05, "X");
+    h_Cross_YXc_Weighted3->Draw("col");
+    h_Cross_YXc_Weighted3->SetMaximum(h_Cross_YXc_Weighted3->GetMaximum() / 5.);
+    uRwellTools::DrawGroupStripBiundaries();
+    c2->Print(Form("Figs/Cross_YXc3_Weighted_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c2->Print(Form("Figs/Cross_YXc3_Weighted_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c2->Print(Form("Figs/Cross_YXc3_Weighted_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
+
+    Y_bin2 = h_Cross_YXc_Weighted3->GetYaxis()->FindBin(245);
+    Y_bin1 = h_Cross_YXc_Weighted3->GetYaxis()->FindBin(-245);
+
+    
+    TH1D *h_Cross_X_Weighted3 = (TH1D*) h_Cross_YXc_Weighted3->ProjectionX("h_Cross_X_Weighted3", Y_bin1, Y_bin2);
+    h_Cross_X_Weighted3->SetLineColor(4);
+    h_Cross_X_Weighted3->SetFillColor(4);
+    int bin2Nomalize = h_Cross_X_Weighted3->FindBin(10.);
+    h_Cross_X3->Scale(h_Cross_X_Weighted3->GetBinContent(bin2Nomalize) / h_Cross_X3->GetBinContent(bin2Nomalize));
+    h_Cross_X3->GetXaxis()->UnZoom();
+
+    TLegend *leg2 = new TLegend(0.15, 0.7, 0.3, 0.97);
+    leg2->SetBorderSize(0);
+    leg2->AddEntry(h_Cross_X_Weighted3, "Weighted");
+    leg2->AddEntry(h_Cross_X3, "Not Weighted");
+    h_Cross_X_Weighted3->SetStats(0);
+    h_Cross_X_Weighted3->Draw("hist");
+    h_Cross_X3->Draw("hist same");
+    leg2->Draw();
+    c2->Print(Form("Figs/Cross_X3_Weighted_Unweighted_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c2->Print(Form("Figs/Cross_X3_Weighted_Unweighted_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c2->Print(Form("Figs/Cross_X3_Weighted_Unweighted_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
 
     return 0;
 }
