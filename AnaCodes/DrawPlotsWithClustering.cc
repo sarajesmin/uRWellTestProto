@@ -239,6 +239,7 @@ int main(int argc, char **argv) {
     h_Cross_YXc2->SetTitle("; Cross X coordinate [mm]; Cross Y coordinate [mm]");
     h_Cross_YXc2->Draw("col");
     DrawActiveArea();
+    uRwellTools::DrawGroupStripBiundaries();
     c2->Print(Form("Figs/Cross_YXc2_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_YXc2_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_YXc2_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
