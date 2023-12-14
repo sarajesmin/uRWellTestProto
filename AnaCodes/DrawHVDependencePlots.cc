@@ -132,16 +132,16 @@ int main() {
     leg1->SetBorderSize(0);
     leg1->AddEntry(gr_Eff_U, "U Cluster");
     leg1->AddEntry(gr_Eff_V, "V Cluster");
-    leg1->AddEntry(gr_Eff_OR, "Any Cluster");
+    //leg1->AddEntry(gr_Eff_OR, "Any Cluster");
     leg1->AddEntry(gr_Eff_AND, "U and V Cluster");
-    leg1->AddEntry(gr_Eff_CrsBgrSubtr, "Bgr Subtracted");
+    //leg1->AddEntry(gr_Eff_CrsBgrSubtr, "Bgr Subtracted");
 
     TMultiGraph *mtgr1 = new TMultiGraph();
     mtgr1->Add(gr_Eff_U);
     mtgr1->Add(gr_Eff_V);
-    mtgr1->Add(gr_Eff_OR);
+    //mtgr1->Add(gr_Eff_OR);
     mtgr1->Add(gr_Eff_AND);
-    mtgr1->Add(gr_Eff_CrsBgrSubtr);
+    //mtgr1->Add(gr_Eff_CrsBgrSubtr);
 
     mtgr1->Draw("APL");
     mtgr1->SetTitle("; MESH HV [V]; Efficiency");
