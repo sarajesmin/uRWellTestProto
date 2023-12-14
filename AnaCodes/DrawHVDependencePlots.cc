@@ -63,8 +63,8 @@ int main() {
 
     int series = 1; //just to identify series of runs for HV studies.
 
-    const double threshold = 4;
-    const int MinHits = 1;
+    const double threshold = 3;
+    const int MinHits = 2;
 
     std::string hvTablefileName = Form("HV_Table_%d.dat", series);
     ifstream inp_HVTable(hvTablefileName.c_str());
