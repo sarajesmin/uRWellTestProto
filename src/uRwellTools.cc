@@ -221,7 +221,7 @@ namespace uRwellTools {
             fCrossY = getCrossY(fStripU, fStripV);
 
             fSlotU = getSlot(int (fStripU));
-            fSlotV = getSlot(int (100 + fStripU)); // We add 1000, because the the getSlot( ) function as an argument takes global strip number i, 1 to 1704
+            fSlotV = getSlot(int (1000 + fStripV)); // We add 1000, because the the getSlot( ) function as an argument takes global strip number i, 1 to 1704
 
             fgrU = (std::lower_bound(gr_UBounderies.begin(), gr_UBounderies.end(), fStripU) - gr_UBounderies.begin()) - 1;
             fgrV = (std::lower_bound(gr_VBounderies.begin(), gr_VBounderies.end(), fStripV) - gr_VBounderies.begin()) - 1;
