@@ -132,8 +132,8 @@ void uRwellTools::DrawGroupStripBiundaries() {
 
         if (x2 > X_top_edge) {
             //  This means the strip doesn't reach the top boundary, but crosses the right side.
-            x2 = (b_right - Y_0 + (U_bounderies[i] * pitch) / cos(strip_alpha))/( tan(strip_alpha) - a_right );
-            y2 = a_right*x2 + b_right;            
+            x2 = (b_right - Y_0 + (U_bounderies[i] * pitch) / cos(strip_alpha)) / (tan(strip_alpha) - a_right);
+            y2 = a_right * x2 + b_right;
         }
         line1->DrawLine(x1, y1, x2, y2);
     }
@@ -155,8 +155,8 @@ void uRwellTools::DrawGroupStripBiundaries() {
 
         if (x2 < -X_top_edge) {
             //  This means the strip doesn't reach the top boundary, but crosses the right side.
-            x2 = (b_left - Y_0 + (V_bounderies[i] * pitch) / cos(-strip_alpha))/( tan(-strip_alpha) - a_left );
-            y2 = a_left*x2 + b_left;
+            x2 = (b_left - Y_0 + (V_bounderies[i] * pitch) / cos(-strip_alpha)) / (tan(-strip_alpha) - a_left);
+            y2 = a_left * x2 + b_left;
         }
         line1->DrawLine(x1, y1, x2, y2);
     }
@@ -200,6 +200,52 @@ namespace uRwellTools {
     void uRwellCluster::FinalizeCluster() {
         findPeakEnergy();
         findAvgStrip();
+    }
+
+    uRwellCross::uRwellCross(double stripU, double stripV) {
+
+        try {
+
+            // ========= Make sure strips are not out of range =========
+            if (stripU < 1 || stripU > nMaxUStrip || stripV < 1 || stripV > nMaxVStrip) {
+                cout << "Strip U is " << stripU << endl;
+                cout << "Strip V is " << stripV << endl;
+
+                throw ( "One of strip is out of range");
+            }
+
+            fStripU = stripU;
+            fStripV = stripV;
+
+            fCrossX = getCrossX(fStripU, fStripV);
+            fCrossY = getCrossY(fStripU, fStripV);
+
+            fSlotU = getSlot(int (fStripU));
+            fSlotV = getSlot(int (100 + fStripU)); // We add 1000, because the the getSlot( ) function as an argument takes global strip number i, 1 to 1704
+
+            fgrU = (std::lower_bound(gr_UBounderies.begin(), gr_UBounderies.end(), fStripU) - gr_UBounderies.begin()) - 1;
+            fgrV = (std::lower_bound(gr_VBounderies.begin(), gr_VBounderies.end(), fStripV) - gr_VBounderies.begin()) - 1;
+
+            fGroupID = IsInsideDetector(fCrossX, fCrossY) ? gr_min[ fgrU ] + fgrV - gr_Vmin[fgrU] : -1;
+
+
+        } catch (uRwellException ex) {
+            cout << "!! uRwell Exception !!" << endl;
+            cout << ex.what();
+        }
+
+    }
+
+    const void uRwellCross::PrintCross(){
+        cout<<" ============== CRoss ============= "<<endl;
+        cout<<"*  Strip U: "<<fStripU<<"      Strip V: "<<fStripV<<endl;
+        cout<<"*  Cross (X, Y) = ("<<fCrossX<<","<<fCrossY<<")"<<endl;
+        cout<<"*  Slot U    = "<<fSlotU<<endl;
+        cout<<"*  Slot V    = "<<fSlotV<<endl;
+        cout<<"*  group U   = "<<fgrU<<endl;
+        cout<<"*  group V   = "<<fgrV<<endl;
+        cout<<"*  group ID  = "<<fGroupID<<endl;
+        cout<<endl<<endl;        
     }
 
     std::vector<uRwellCluster> getGlusters(std::vector<uRwellHit> v_Hits) {

@@ -351,16 +351,21 @@ int main(int argc, char** argv) {
                     double cl_Strip_U = cur_Ucl.getAvgStrip();
                     double cl_Strip_V = cur_Vcl.getAvgStrip();
 
+                    uRwellCross curCrs = uRwellCross(cl_Strip_U, cl_Strip_V);
+                    double crsX = curCrs.getX();
+                    double crsY = curCrs.getY();
+                    int group_ID = curCrs.getGroupID();
+
+                    //curCrs.PrintCross();
+
                     double cl_ADC_U = cur_Ucl.getPeakADC();
                     double cl_ADC_V = cur_Vcl.getPeakADC();
 
                     double cl_ADC_Tot = cl_ADC_U + cl_ADC_V;
 
-                    double crsX = getCrossX(cl_Strip_U, cl_Strip_V);
-                    double crsY = getCrossY(cl_Strip_U, cl_Strip_V);
-
                     h_Cross_YXc1.Fill(crsX, crsY);
                     h_Cross_YXc_Weighted1.Fill(crsX, crsY, cl_ADC_Tot);
+
 
                     if (uRwellTools::IsInsideDetector(crsX, crsY)) {
                         h_Cross_YXc3.Fill(crsX, crsY);
