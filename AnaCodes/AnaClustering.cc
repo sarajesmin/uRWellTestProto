@@ -91,6 +91,8 @@ int main(int argc, char** argv) {
     hipo::event event;
     int evCounter = 0;
 
+    const int nMaxGroup = 11;
+
     const int layer_U_uRwell = 1;
     const int layer_V_uRwell = 2;
     const int sec_uRwell = 6;
@@ -137,6 +139,17 @@ int main(int argc, char** argv) {
 
     TH2D h_nVcl_vs_Ucoord1("h_nVcl_vs_Ucoord1", "", 200, 0., 710., 15, -0.5, 14.5);
     TH2D h_nUcl_vs_Vcoord1("h_nUcl_vs_Vcoord1", "", 200, 0., 710., 15, -0.5, 14.5);
+
+    TH2D h_Cross_YXx1_[nMaxGroup];
+    TH2D h_ADC_V_U1_[nMaxGroup];
+    TH2D h_nV_U1_[nMaxGroup];
+
+    for (int i = 0; i < nMaxGroup; i++) {
+        h_Cross_YXx1_[i] = TH2D(Form("h_Cross_YXx1_%d", i), "", 1000, -900., 900., 200, -500., 500.);
+        h_ADC_V_U1_[i] = TH2D(Form("h_ADC_V_U1_%d", i), "", 200, 0., 1500., 200., 0., 1500);
+        h_nV_U1_[i] = TH2D(Form("h_nV_U1_%d", i), "", 15, -0.5, 14.5, 15, -0.5, 14.5);
+    }
+
 
     try {
 
@@ -360,6 +373,12 @@ int main(int argc, char** argv) {
 
                     double cl_ADC_U = cur_Ucl.getPeakADC();
                     double cl_ADC_V = cur_Vcl.getPeakADC();
+
+                    if (group_ID >= 0) {
+                        h_Cross_YXx1_[group_ID].Fill(crsX, crsY);
+                        h_ADC_V_U1_[group_ID].Fill(cl_ADC_U, cl_ADC_V);
+                        h_nV_U1_[group_ID].Fill(cur_Ucl.getHits()->size(), cur_Vcl.getHits()->size());
+                    }
 
                     double cl_ADC_Tot = cl_ADC_U + cl_ADC_V;
 
