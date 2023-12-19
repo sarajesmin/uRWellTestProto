@@ -30,7 +30,9 @@ using namespace std;
  */
 int main() {
 
-    std::vector<int> v_runs = {1731, 1745, 1750, 1753, 1790, 1761, 1779};
+    std::map<int, std::vector<int> > mv_runs;
+    mv_runs[1] = {1731, 1745, 1750, 1753, 1790, 1761, 1779};
+    mv_runs[2] = {1824, 1826, 1828, 1833, 1835};
     std::map<int, double> m_MESH_HV; // The key is the run number, the value is the MESH_HV
     std::map<int, double> m_Cathode_HV; // The key is the run number, the value is the Cathode_HV
 
@@ -61,10 +63,10 @@ int main() {
     gr_Eff_CrsBgrSubtr->SetMarkerColor(8);
     gr_Eff_CrsBgrSubtr->SetMarkerSize(2);
 
-    int series = 1; //just to identify series of runs for HV studies.
+    int series = 2; //just to identify series of runs for HV studies.
 
-    const double threshold = 3;
-    const int MinHits = 2;
+    const double threshold = 4;
+    const int MinHits = 1;
 
     std::string hvTablefileName = Form("HV_Table_%d.dat", series);
     ifstream inp_HVTable(hvTablefileName.c_str());
@@ -86,9 +88,9 @@ int main() {
         cout << "Can not opern the file" << hvTablefileName.c_str() << endl;
     }
 
-    for (int i = 0; i < v_runs.size(); i++) {
+    for (int i = 0; i < mv_runs[series].size(); i++) {
 
-        int run = v_runs.at(i);
+        int run = mv_runs[series].at(i);
 
 
         double eff_U, eff_V, eff_OR, eff_AND, eff_BgrSubtr;
@@ -132,16 +134,16 @@ int main() {
     leg1->SetBorderSize(0);
     leg1->AddEntry(gr_Eff_U, "U Cluster");
     leg1->AddEntry(gr_Eff_V, "V Cluster");
-    //leg1->AddEntry(gr_Eff_OR, "Any Cluster");
+    leg1->AddEntry(gr_Eff_OR, "Any Cluster");
     leg1->AddEntry(gr_Eff_AND, "U and V Cluster");
-    //leg1->AddEntry(gr_Eff_CrsBgrSubtr, "Bgr Subtracted");
+    leg1->AddEntry(gr_Eff_CrsBgrSubtr, "Bgr Subtracted");
 
     TMultiGraph *mtgr1 = new TMultiGraph();
     mtgr1->Add(gr_Eff_U);
     mtgr1->Add(gr_Eff_V);
-    //mtgr1->Add(gr_Eff_OR);
+    mtgr1->Add(gr_Eff_OR);
     mtgr1->Add(gr_Eff_AND);
-    //mtgr1->Add(gr_Eff_CrsBgrSubtr);
+    mtgr1->Add(gr_Eff_CrsBgrSubtr);
 
     mtgr1->Draw("APL");
     mtgr1->SetTitle("; MESH HV [V]; Efficiency");
