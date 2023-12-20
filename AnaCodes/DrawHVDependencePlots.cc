@@ -10,6 +10,8 @@
 #include <fstream>
 #include <iostream>
 
+#include <cxxopts.hpp>
+
 #include <TF1.h>
 #include <TH1D.h>
 #include <TH2D.h>
@@ -28,7 +30,40 @@ using namespace std;
 /*
  * 
  */
-int main() {
+int main(int argc, char **argv) {
+
+    cxxopts::Options options("DrawHVDependencePlots", "Draws plots of efficiencies (or others staff) as a function of HV");
+
+    options.add_options()
+            ("s,Series", "HV Scan series", cxxopts::value<int>())
+            ("t,Threshold", "Hit Threshold in terms of sigma", cxxopts::value<double>())
+            ("m,MinHits", "Number of minimum hits in the cluster", cxxopts::value<int>())
+            ;
+
+    auto parsed_options = options.parse(argc, argv);
+    
+    if (!parsed_options.count("Series")) {        
+        cout << "The Series of runs is nor provided. Exiting..." << endl;
+        exit(1);
+    }
+    const int series = parsed_options["Series"].as<int>();
+
+
+    if (!parsed_options.count("Threshold")) {
+        cout << "* You didn't provide the hit threshold. Exiting" << endl;
+        exit(1);
+    }
+    const double threshold = parsed_options["Threshold"].as<double>();
+
+    if (!parsed_options.count("MinHits")) {
+        cout << "* You didn't provide the Minimum hits int the cluster. Exiting " << endl;
+        exit(1);
+    }
+    const int MinHits = parsed_options["MinHits"].as<int>();
+
+    cout << "The hit threshold is " << threshold << "\\sigma" << endl;
+    cout << "The Minimum cluster size is " << MinHits << "hits" << endl;
+
 
     std::map<int, std::vector<int> > mv_runs;
     mv_runs[1] = {1731, 1745, 1750, 1753, 1790, 1761, 1779};
@@ -63,10 +98,6 @@ int main() {
     gr_Eff_CrsBgrSubtr->SetMarkerColor(8);
     gr_Eff_CrsBgrSubtr->SetMarkerSize(2);
 
-    int series = 2; //just to identify series of runs for HV studies.
-
-    const double threshold = 4;
-    const int MinHits = 1;
 
     std::string hvTablefileName = Form("HV_Table_%d.dat", series);
     ifstream inp_HVTable(hvTablefileName.c_str());
@@ -95,7 +126,7 @@ int main() {
 
         double eff_U, eff_V, eff_OR, eff_AND, eff_BgrSubtr;
         uRwellTools::uRwellEff eff;
-                
+
         TFile *file_in = new TFile(Form("AnaClustering_%d_Thr_%1.1f_MinHits_%d.root", run, threshold, MinHits));
 
         TH2D *h_n_uRwell_V_vs_U_MultiHitCl = (TH2D*) file_in->Get("h_n_uRwell_V_vs_U_MultiHitCl");
@@ -110,19 +141,19 @@ int main() {
         eff.eff_crs_BgrSubtr = 100. * n_CrossBgrSubtracted / All_GoodEventts;
 
         gr_Eff_U->SetPoint(i, m_MESH_HV[run], eff.eff_U);
-        gr_Eff_U->SetPointError(i, 0., 0., eff.errLow_eff_U, eff.errUp_eff_U );
+        gr_Eff_U->SetPointError(i, 0., 0., eff.errLow_eff_U, eff.errUp_eff_U);
         gr_Eff_V->SetPoint(i, m_MESH_HV[run], eff.eff_V);
-        gr_Eff_U->SetPointError(i, 0., 0., eff.errLow_eff_V, eff.errUp_eff_V );
+        gr_Eff_U->SetPointError(i, 0., 0., eff.errLow_eff_V, eff.errUp_eff_V);
         gr_Eff_OR->SetPoint(i, m_MESH_HV[run], eff.eff_OR);
-        gr_Eff_U->SetPointError(i, 0., 0., eff.errLow_eff_OR, eff.errUp_eff_OR );
+        gr_Eff_U->SetPointError(i, 0., 0., eff.errLow_eff_OR, eff.errUp_eff_OR);
         gr_Eff_AND->SetPoint(i, m_MESH_HV[run], eff.eff_AND);
-        gr_Eff_U->SetPointError(i, 0., 0., eff.errLow_eff_AND, eff.errUp_eff_AND );
-        
-        eff.errUp_eff_crs_BgrSubtr = 100*TEfficiency::ClopperPearson(All_GoodEventts, n_CrossBgrSubtracted,   uRwellTools::OneSigma,  true) - eff.eff_crs_BgrSubtr ;
-        eff.errLow_eff_crs_BgrSubtr = eff.eff_crs_BgrSubtr - 100*TEfficiency::ClopperPearson(All_GoodEventts, n_CrossBgrSubtracted,   uRwellTools::OneSigma,  false);
+        gr_Eff_U->SetPointError(i, 0., 0., eff.errLow_eff_AND, eff.errUp_eff_AND);
+
+        eff.errUp_eff_crs_BgrSubtr = 100 * TEfficiency::ClopperPearson(All_GoodEventts, n_CrossBgrSubtracted, uRwellTools::OneSigma, true) - eff.eff_crs_BgrSubtr;
+        eff.errLow_eff_crs_BgrSubtr = eff.eff_crs_BgrSubtr - 100 * TEfficiency::ClopperPearson(All_GoodEventts, n_CrossBgrSubtracted, uRwellTools::OneSigma, false);
         gr_Eff_CrsBgrSubtr->SetPoint(i, m_MESH_HV[run], eff.eff_crs_BgrSubtr);
         gr_Eff_CrsBgrSubtr->SetPointError(i, 0., 0., eff.errLow_eff_crs_BgrSubtr, eff.errUp_eff_crs_BgrSubtr);
-        
+
         //cout<<eff.errLow_eff_U<<"  "<<eff.errUp_eff_U<<endl;
 
         delete h_Cross_YXc2;
