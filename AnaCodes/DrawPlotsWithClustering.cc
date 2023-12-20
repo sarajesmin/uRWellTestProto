@@ -28,7 +28,7 @@ void DrawActiveArea();
  */
 int main(int argc, char **argv) {
 
-    cxxopts::Options options("AnaClustering", "Performs clustering and also does analysis on cosmic data");
+    cxxopts::Options options("DrawPlotsWithClustering", "Draws plots from the root file created by analysis");
 
     options.add_options()
             ("r,Run", "Run number", cxxopts::value<int>())
