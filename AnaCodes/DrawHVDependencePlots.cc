@@ -67,7 +67,7 @@ int main(int argc, char **argv) {
 
     std::map<int, std::vector<int> > mv_runs;
     mv_runs[1] = {1731, 1745, 1750, 1753, 1790, 1761, 1779};
-    mv_runs[2] = {1824, 1826, 1828, 1833, 1835, 1837};
+    mv_runs[2] = {1824, 1826, 1828, 1833, 1835, 1837, 1840};
     std::map<int, double> m_MESH_HV; // The key is the run number, the value is the MESH_HV
     std::map<int, double> m_Cathode_HV; // The key is the run number, the value is the Cathode_HV
 
