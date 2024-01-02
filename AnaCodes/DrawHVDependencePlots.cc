@@ -67,7 +67,7 @@ int main(int argc, char **argv) {
 
     std::map<int, std::vector<int> > mv_runs;
     mv_runs[1] = {1731, 1745, 1750, 1753, 1790, 1761, 1779};
-    mv_runs[2] = {1824, 1826, 1828, 1833, 1835, 1837, 1840};
+    mv_runs[2] = {1824, 1826, 1828, 1833, 1835, 1837, 1840, 1848, 1852};
     std::map<int, double> m_MESH_HV; // The key is the run number, the value is the MESH_HV
     std::map<int, double> m_Cathode_HV; // The key is the run number, the value is the Cathode_HV
 
@@ -98,6 +98,13 @@ int main(int argc, char **argv) {
     gr_Eff_CrsBgrSubtr->SetMarkerColor(8);
     gr_Eff_CrsBgrSubtr->SetMarkerSize(2);
 
+    TGraphAsymmErrors *gr_Eff_Ratio_V_Over_U = new TGraphAsymmErrors();
+    gr_Eff_Ratio_V_Over_U->SetMarkerStyle(20);
+    gr_Eff_Ratio_V_Over_U->SetMarkerColor(2);
+    gr_Eff_Ratio_V_Over_U->SetMarkerSize(2);
+    
+    
+
 
     std::string hvTablefileName = Form("HV_Table_%d.dat", series);
     ifstream inp_HVTable(hvTablefileName.c_str());
@@ -116,7 +123,7 @@ int main(int argc, char **argv) {
         }
 
     } else {
-        cout << "Can not opern the file" << hvTablefileName.c_str() << endl;
+        cout << "Can not open the file" << hvTablefileName.c_str() << endl;
     }
 
     for (int i = 0; i < mv_runs[series].size(); i++) {
@@ -149,6 +156,13 @@ int main(int argc, char **argv) {
         gr_Eff_AND->SetPoint(i, m_MESH_HV[run], eff.eff_AND);
         gr_Eff_U->SetPointError(i, 0., 0., eff.errLow_eff_AND, eff.errUp_eff_AND);
 
+        
+        double err_eff_U_over_V_Low = (eff.eff_V/eff.eff_U)*sqrt( (eff.errLow_eff_U/eff.eff_U)*(eff.errLow_eff_U/eff.eff_U) + (eff.errUp_eff_V/eff.eff_V)*(eff.errUp_eff_V/eff.eff_V) );
+        double err_eff_U_over_V_Up = (eff.eff_V/eff.eff_U)*sqrt( (eff.errUp_eff_U/eff.eff_U)*(eff.errUp_eff_U/eff.eff_U) + (eff.errLow_eff_V/eff.eff_V)*(eff.errLow_eff_V/eff.eff_V) );
+        gr_Eff_Ratio_V_Over_U->SetPoint(i, m_MESH_HV[run], eff.eff_V/eff.eff_U);
+        gr_Eff_Ratio_V_Over_U->SetPointError(i, 0., 0., err_eff_U_over_V_Low, err_eff_U_over_V_Up);
+        
+        
         eff.errUp_eff_crs_BgrSubtr = 100 * TEfficiency::ClopperPearson(All_GoodEventts, n_CrossBgrSubtracted, uRwellTools::OneSigma, true) - eff.eff_crs_BgrSubtr;
         eff.errLow_eff_crs_BgrSubtr = eff.eff_crs_BgrSubtr - 100 * TEfficiency::ClopperPearson(All_GoodEventts, n_CrossBgrSubtracted, uRwellTools::OneSigma, false);
         gr_Eff_CrsBgrSubtr->SetPoint(i, m_MESH_HV[run], eff.eff_crs_BgrSubtr);
@@ -185,5 +199,14 @@ int main(int argc, char **argv) {
     c1->Print(Form("Figs/HV_Eff_Dependence_Thr_%1.1f_MinHits_%d_Series_%d.png", threshold, MinHits, series));
     c1->Print(Form("Figs/HV_Eff_Dependence_Thr_%1.1f_MinHits_%d_Series_%d.root", threshold, MinHits, series));
 
+    c1->Clear();
+    gr_Eff_Ratio_V_Over_U->GetYaxis()->SetTitleOffset(1.4);
+    gr_Eff_Ratio_V_Over_U->Draw("APL");
+    gr_Eff_Ratio_V_Over_U->SetTitle("; MESH HV [V]; Eff_V/Eff_U");
+    
+    c1->Print(Form("Figs/HV_EffRatio_U_Over_V_Dep_Thr_%1.1f_MinHits_%d_Series_%d.pdf", threshold, MinHits, series));
+    c1->Print(Form("Figs/HV_EffRatio_U_Over_V_Dep_Thr_%1.1f_MinHits_%d_Series_%d.png", threshold, MinHits, series));
+    c1->Print(Form("Figs/HV_EffRatio_U_Over_V_Dep_Thr_%1.1f_MinHits_%d_Series_%d.root", threshold, MinHits, series));
+    
     return 0;
 }
