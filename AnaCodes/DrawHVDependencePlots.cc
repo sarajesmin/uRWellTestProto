@@ -41,8 +41,8 @@ int main(int argc, char **argv) {
             ;
 
     auto parsed_options = options.parse(argc, argv);
-    
-    if (!parsed_options.count("Series")) {        
+
+    if (!parsed_options.count("Series")) {
         cout << "The Series of runs is nor provided. Exiting..." << endl;
         exit(1);
     }
@@ -68,8 +68,37 @@ int main(int argc, char **argv) {
     std::map<int, std::vector<int> > mv_runs;
     mv_runs[1] = {1731, 1745, 1750, 1753, 1790, 1761, 1779};
     mv_runs[2] = {1824, 1826, 1828, 1833, 1835, 1837, 1840, 1848, 1852};
+    mv_runs[3] = {1854, 1855, 1857, 1852, 1859, 1861, 1866};
+    mv_runs[4] = {18660, 18661, 18662, 18663, 18664, 18665, 18666, 18667, 18668, 18669, 186610, 186611, 186612, 186613, 186614, 186615, 186616, 186617 };
+    mv_runs[5] = {18720, 18721, 18722, 18723, 18724, 18725, 18726, 18727, 18728, 18729, 187210, 187211, 187212, 187213, 187214, 187215, 187216, 187217, 187218, 187219 };
+    mv_runs[6] = {18770, 18771, 18772, 18773, 18774, 18775, 18776, 18777, 18778, 18779, 187710, 187711, 187712, 187713, 187714, 187715, 187716};
+    mv_runs[7] = {18800, 18801, 18802};
+    mv_runs[8] = {18830, 18831, 18832, 18833, 18834, 18835, 18836, 18837, 18838, 18839, 188310, 188311, 188312, 188313};
     std::map<int, double> m_MESH_HV; // The key is the run number, the value is the MESH_HV
     std::map<int, double> m_Cathode_HV; // The key is the run number, the value is the Cathode_HV
+    std::map<int, double> m_Drift_HV; // The key is the run number, the value is the Drift_HV = Hathode_HV - MESH_HV
+
+    std::map<int, std::string> m_HVType;
+    m_HVType[1] = "MESH";
+    m_HVType[2] = "MESH";
+    m_HVType[3] = "DRIFT";
+    m_HVType[4] = "FILE_IND";
+    m_HVType[5] = "FILE_IND";
+    m_HVType[6] = "FILE_IND";
+    m_HVType[7] = "FILE_IND";
+    m_HVType[8] = "FILE_IND";
+    
+    
+    std::map<int, std::string> m_XTitle;
+    
+    m_XTitle[1] = "MESH HV [V]";
+    m_XTitle[2] = "MESH HV [V]";
+    m_XTitle[3] = "DRIFT HV [V]";
+    m_XTitle[4] = "File number";
+    m_XTitle[5] = "File number";
+    m_XTitle[6] = "File number";
+    m_XTitle[7] = "File number";
+    m_XTitle[8] = "File number";
 
     TCanvas *c1 = new TCanvas("c1", "", 950, 950);
     c1->SetTopMargin(0.02);
@@ -102,15 +131,11 @@ int main(int argc, char **argv) {
     gr_Eff_Ratio_V_Over_U->SetMarkerStyle(20);
     gr_Eff_Ratio_V_Over_U->SetMarkerColor(2);
     gr_Eff_Ratio_V_Over_U->SetMarkerSize(2);
-    
-    
-
 
     std::string hvTablefileName = Form("HV_Table_%d.dat", series);
     ifstream inp_HVTable(hvTablefileName.c_str());
 
     if (inp_HVTable.is_open()) {
-
 
         while (!inp_HVTable.eof()) {
             int run, HV_MESH, HV_Cathode, HV_GEM, HV_Drift;
@@ -120,6 +145,7 @@ int main(int argc, char **argv) {
             cout << run << "  " << HV_MESH << "   " << HV_Cathode << "   " << HV_GEM << endl;
             m_MESH_HV[run] = HV_MESH;
             m_Cathode_HV[run] = HV_Cathode;
+            m_Drift_HV[run] = HV_Cathode - HV_MESH;
         }
 
     } else {
@@ -129,7 +155,6 @@ int main(int argc, char **argv) {
     for (int i = 0; i < mv_runs[series].size(); i++) {
 
         int run = mv_runs[series].at(i);
-
 
         double eff_U, eff_V, eff_OR, eff_AND, eff_BgrSubtr;
         uRwellTools::uRwellEff eff;
@@ -147,29 +172,45 @@ int main(int argc, char **argv) {
 
         eff.eff_crs_BgrSubtr = 100. * n_CrossBgrSubtracted / All_GoodEventts;
 
-        gr_Eff_U->SetPoint(i, m_MESH_HV[run], eff.eff_U);
+        double HV_Value;
+
+        if (strcmp(m_HVType[series].c_str(), "MESH") == 0) {
+            HV_Value = m_MESH_HV[run];
+        } else if (strcmp(m_HVType[series].c_str(), "DRIFT") == 0) {
+            HV_Value = m_Drift_HV[run];
+        } else if (strcmp(m_HVType[series].c_str(), "CATHODE") == 0) {
+            HV_Value = m_Cathode_HV[run];
+        } else if (strcmp(m_HVType[series].c_str(), "FILE_IND") == 0) {
+            HV_Value = m_Cathode_HV[run];
+        }
+
+        gr_Eff_U->SetPoint(i, HV_Value, eff.eff_U);
         gr_Eff_U->SetPointError(i, 0., 0., eff.errLow_eff_U, eff.errUp_eff_U);
-        gr_Eff_V->SetPoint(i, m_MESH_HV[run], eff.eff_V);
+        gr_Eff_V->SetPoint(i, HV_Value, eff.eff_V);
         gr_Eff_U->SetPointError(i, 0., 0., eff.errLow_eff_V, eff.errUp_eff_V);
-        gr_Eff_OR->SetPoint(i, m_MESH_HV[run], eff.eff_OR);
+        gr_Eff_OR->SetPoint(i, HV_Value, eff.eff_OR);
         gr_Eff_U->SetPointError(i, 0., 0., eff.errLow_eff_OR, eff.errUp_eff_OR);
-        gr_Eff_AND->SetPoint(i, m_MESH_HV[run], eff.eff_AND);
+        gr_Eff_AND->SetPoint(i, HV_Value, eff.eff_AND);
         gr_Eff_U->SetPointError(i, 0., 0., eff.errLow_eff_AND, eff.errUp_eff_AND);
 
-        
-        double err_eff_U_over_V_Low = (eff.eff_V/eff.eff_U)*sqrt( (eff.errLow_eff_U/eff.eff_U)*(eff.errLow_eff_U/eff.eff_U) + (eff.errUp_eff_V/eff.eff_V)*(eff.errUp_eff_V/eff.eff_V) );
-        double err_eff_U_over_V_Up = (eff.eff_V/eff.eff_U)*sqrt( (eff.errUp_eff_U/eff.eff_U)*(eff.errUp_eff_U/eff.eff_U) + (eff.errLow_eff_V/eff.eff_V)*(eff.errLow_eff_V/eff.eff_V) );
-        gr_Eff_Ratio_V_Over_U->SetPoint(i, m_MESH_HV[run], eff.eff_V/eff.eff_U);
+
+        double err_eff_U_over_V_Low = (eff.eff_V / eff.eff_U) * sqrt((eff.errLow_eff_U / eff.eff_U)*(eff.errLow_eff_U / eff.eff_U) + (eff.errUp_eff_V / eff.eff_V)*(eff.errUp_eff_V / eff.eff_V));
+        double err_eff_U_over_V_Up = (eff.eff_V / eff.eff_U) * sqrt((eff.errUp_eff_U / eff.eff_U)*(eff.errUp_eff_U / eff.eff_U) + (eff.errLow_eff_V / eff.eff_V)*(eff.errLow_eff_V / eff.eff_V));
+        gr_Eff_Ratio_V_Over_U->SetPoint(i, HV_Value, eff.eff_V / eff.eff_U);
         gr_Eff_Ratio_V_Over_U->SetPointError(i, 0., 0., err_eff_U_over_V_Low, err_eff_U_over_V_Up);
-        
-        
+
+
         eff.errUp_eff_crs_BgrSubtr = 100 * TEfficiency::ClopperPearson(All_GoodEventts, n_CrossBgrSubtracted, uRwellTools::OneSigma, true) - eff.eff_crs_BgrSubtr;
         eff.errLow_eff_crs_BgrSubtr = eff.eff_crs_BgrSubtr - 100 * TEfficiency::ClopperPearson(All_GoodEventts, n_CrossBgrSubtracted, uRwellTools::OneSigma, false);
-        gr_Eff_CrsBgrSubtr->SetPoint(i, m_MESH_HV[run], eff.eff_crs_BgrSubtr);
+        gr_Eff_CrsBgrSubtr->SetPoint(i, HV_Value, eff.eff_crs_BgrSubtr);
         gr_Eff_CrsBgrSubtr->SetPointError(i, 0., 0., eff.errLow_eff_crs_BgrSubtr, eff.errUp_eff_crs_BgrSubtr);
 
         //cout<<eff.errLow_eff_U<<"  "<<eff.errUp_eff_U<<endl;
 
+        TH1D *h_U_PeakADC_MultiCl1 = (TH1D*)file_in->Get("h_U_PeakADC_MultiCl1");
+        h_U_PeakADC_MultiCl1->SetAxisRange(0., 500., "X");
+        
+        
         delete h_Cross_YXc2;
         delete h_n_uRwell_V_vs_U_MultiHitCl;
         delete file_in;
@@ -191,7 +232,7 @@ int main(int argc, char **argv) {
     mtgr1->Add(gr_Eff_CrsBgrSubtr);
 
     mtgr1->Draw("APL");
-    mtgr1->SetTitle("; MESH HV [V]; Efficiency");
+    mtgr1->SetTitle(Form("; %s; Efficiency", m_XTitle[series].c_str()));
     mtgr1->SetMaximum(100.);
     mtgr1->SetMinimum(0.);
     leg1->Draw();
@@ -202,11 +243,11 @@ int main(int argc, char **argv) {
     c1->Clear();
     gr_Eff_Ratio_V_Over_U->GetYaxis()->SetTitleOffset(1.4);
     gr_Eff_Ratio_V_Over_U->Draw("APL");
-    gr_Eff_Ratio_V_Over_U->SetTitle("; MESH HV [V]; Eff_V/Eff_U");
-    
+    gr_Eff_Ratio_V_Over_U->SetTitle(Form("; %s; Eff_V/Eff_U", m_XTitle[series].c_str()));
+
     c1->Print(Form("Figs/HV_EffRatio_U_Over_V_Dep_Thr_%1.1f_MinHits_%d_Series_%d.pdf", threshold, MinHits, series));
     c1->Print(Form("Figs/HV_EffRatio_U_Over_V_Dep_Thr_%1.1f_MinHits_%d_Series_%d.png", threshold, MinHits, series));
     c1->Print(Form("Figs/HV_EffRatio_U_Over_V_Dep_Thr_%1.1f_MinHits_%d_Series_%d.root", threshold, MinHits, series));
-    
+
     return 0;
 }
