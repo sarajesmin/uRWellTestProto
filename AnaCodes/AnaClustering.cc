@@ -136,6 +136,11 @@ int main(int argc, char** argv) {
     TH2D h_Cross_YXc_Weighted3("h_Cross_YXc_Weighted3", "", 1000, -900., 900., 200, -500., 500.);
 
     TH2D h_GEM_XY1("h_GEM_XY1", "", 129, -0.5, 128.5, 129, -0.5, 128.5);
+    TH1D h_ADC_GEM_Y1("h_ADC_GEM_Y1", "", 200, 0., 1000.);
+    TH1D h_ADC_GEM_X1("h_ADC_GEM_X1", "", 200, 0., 1000.);
+
+    TH1D h_MaxADC_GEM_Y1("h_MaxADC_GEM_Y1", "", 200, 0., 1000.);
+    TH1D h_MaxADC_GEM_X1("h_MaxADC_GEM_X1", "", 200, 0., 1000.);
 
     TH2D h_nVcl_vs_Ucoord1("h_nVcl_vs_Ucoord1", "", 200, 0., 710., 15, -0.5, 14.5);
     TH2D h_nUcl_vs_Vcoord1("h_nUcl_vs_Vcoord1", "", 200, 0., 710., 15, -0.5, 14.5);
@@ -201,6 +206,11 @@ int main(int argc, char** argv) {
                     }
 
                 } else if (curHit.sector == sec_GEM) {
+
+                    if (curHit.adcRel < 5) {
+                        continue;
+                    }
+
                     v_GEMHits.push_back(curHit);
 
                     if (curHit.strip < 128) {
@@ -287,6 +297,12 @@ int main(int argc, char** argv) {
 
             for (int iGEMHit = 0; iGEMHit < v_GEMHits.size(); iGEMHit++) {
 
+                if (v_GEMHits.at(iGEMHit).strip < 128) {
+                    h_ADC_GEM_X1.Fill(v_GEMHits.at(iGEMHit).adc);
+                } else {
+                    h_ADC_GEM_Y1.Fill(v_GEMHits.at(iGEMHit).adc);
+                }
+
                 if (v_GEMHits.at(iGEMHit).adcRel > GEMHighThreshold) {
                     if (v_GEMHits.at(iGEMHit).strip < 128) {
                         n_GEMHits_X++;
@@ -297,7 +313,15 @@ int main(int argc, char** argv) {
 
             }
 
+
+            double maxGEM_Y_ADC = 0;
+            double maxGEM_X_ADC = 0;
+
             for (auto curXGEMHit : v_X_GEMHits) {
+
+                if (curXGEMHit.adc > maxGEM_Y_ADC) {
+                    maxGEM_X_ADC = curXGEMHit.adc;
+                }
 
                 if (curXGEMHit.adcRel < GEMHighThreshold) {
                     continue;
@@ -312,6 +336,19 @@ int main(int argc, char** argv) {
                 }
             }
 
+            for (auto curYGEMHit : v_Y_GEMHits) {
+                if (curYGEMHit.adc > maxGEM_Y_ADC) {
+                    maxGEM_Y_ADC = curYGEMHit.adc;
+                }
+            }
+
+            if (maxGEM_X_ADC > 0) {
+                h_MaxADC_GEM_X1.Fill(maxGEM_X_ADC);
+            }
+
+            if (maxGEM_Y_ADC > 0) {
+                h_MaxADC_GEM_Y1.Fill(maxGEM_Y_ADC);
+            }
 
             h_n_GEM_Y_vs_X_Hits1.Fill(n_GEMHits_X, n_GEMHits_Y);
 
