@@ -114,8 +114,8 @@ int main(int argc, char **argv) {
     h_n_UclHits1->SetLineWidth(2);
     h_n_UclHits1->SetTitle("; The # of Hits in U clusters");
     int bin_2 = h_n_UclHits1->FindBin(2);
-    h_n_UclHits1->SetMaximum(1.05 * h_n_UclHits1->GetBinContent(bin_2));
-    h_n_UclHits1->SetAxisRange(2, h_n_UclHits1->GetBinCenter(h_n_UclHits1->GetNbinsX()));
+    //h_n_UclHits1->SetMaximum(1.05 * h_n_UclHits1->GetBinContent(bin_2));
+    //h_n_UclHits1->SetAxisRange(2, h_n_UclHits1->GetBinCenter(h_n_UclHits1->GetNbinsX()));
     h_n_UclHits1->GetXaxis()->SetNdivisions(716);
     h_n_UclHits1->Draw();
     c1->Print(Form("Figs/N_Ucl_Hits_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
@@ -126,8 +126,8 @@ int main(int argc, char **argv) {
     h_n_VclHits1->SetLineWidth(2);
     h_n_VclHits1->SetTitle("; The # of Hits in V clusters");
     bin_2 = h_n_VclHits1->FindBin(2);
-    h_n_VclHits1->SetMaximum(1.05 * h_n_VclHits1->GetBinContent(bin_2));
-    h_n_VclHits1->SetAxisRange(2, h_n_VclHits1->GetBinCenter(h_n_VclHits1->GetNbinsX()));
+    //h_n_VclHits1->SetMaximum(1.05 * h_n_VclHits1->GetBinContent(bin_2));
+    //h_n_VclHits1->SetAxisRange(2, h_n_VclHits1->GetBinCenter(h_n_VclHits1->GetNbinsX()));
     h_n_VclHits1->GetXaxis()->SetNdivisions(716);
     h_n_VclHits1->Draw();
     c1->Print(Form("Figs/N_Vcl_Hits_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
