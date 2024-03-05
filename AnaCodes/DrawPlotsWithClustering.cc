@@ -160,6 +160,28 @@ int main(int argc, char **argv) {
     c1->Print(Form("Figs/Peak_ADC_VStrips_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
     c1->Print(Form("Figs/Peak_ADC_VStrips_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
 
+    TH1D *h_MaxADC_GEM_Y1 = (TH1D*) file_in->Get("h_MaxADC_GEM_Y1");
+    h_MaxADC_GEM_Y1->SetLineWidth(2);
+    h_MaxADC_GEM_Y1->SetTitle("; ADC of GEM Y highest hit [ADC]");
+    h_MaxADC_GEM_Y1->SetAxisRange(0., adcMaxAxis, "X");
+    f_Landau->SetParameters(5. * h_MaxADC_GEM_Y1->GetMaximum(), h_MaxADC_GEM_Y1->GetBinCenter(h_MaxADC_GEM_Y1->GetMaximumBin()), 10);
+    h_MaxADC_GEM_Y1->Fit(f_Landau, "MeV", "", 0., adcMaxAxis);
+    lat1->DrawLatex(0.5, 0.7, Form("MPV = %1.1f", f_Landau->GetParameter(1)));
+    c1->Print(Form("Figs/GEM_MAX_ADC_Y_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c1->Print(Form("Figs/GEM_MAX_ADC_Y_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c1->Print(Form("Figs/GEM_MAX_ADC_Y_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
+    
+    TH1D *h_MaxADC_GEM_X1 = (TH1D*) file_in->Get("h_MaxADC_GEM_X1");
+    h_MaxADC_GEM_X1->SetLineWidth(2);
+    h_MaxADC_GEM_X1->SetTitle("; ADC of GEM X highest hit [ADC]");
+    h_MaxADC_GEM_X1->SetAxisRange(0., adcMaxAxis, "X");
+    f_Landau->SetParameters(5. * h_MaxADC_GEM_X1->GetMaximum(), h_MaxADC_GEM_X1->GetBinCenter(h_MaxADC_GEM_X1->GetMaximumBin()), 10);
+    h_MaxADC_GEM_X1->Fit(f_Landau, "MeV", "", 0., adcMaxAxis);
+    lat1->DrawLatex(0.5, 0.7, Form("MPV = %1.1f", f_Landau->GetParameter(1)));
+    c1->Print(Form("Figs/GEM_MAX_ADC_X_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c1->Print(Form("Figs/GEM_MAX_ADC_X_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c1->Print(Form("Figs/GEM_MAX_ADC_X_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
+    
     TH1D *h_U_Coord_MultrCl1 = (TH1D*) file_in->Get("h_U_Coord_MultrCl1");
     h_U_Coord_MultrCl1->SetTitle("; Cluster U coordinate [strip]");
     h_U_Coord_MultrCl1->SetLineWidth(2);
@@ -237,6 +259,7 @@ int main(int argc, char **argv) {
     TH2D *h_Cross_YXc2 = (TH2D*) file_in->Get("h_Cross_YXc2");
     h_Cross_YXc2->SetStats(0);
     h_Cross_YXc2->SetTitle("; Cross X coordinate [mm]; Cross Y coordinate [mm]");
+    h_Cross_YXc2->SetMinimum(3);
     h_Cross_YXc2->Draw("col");
     DrawActiveArea();
     uRwellTools::DrawGroupStripBiundaries();
@@ -284,7 +307,7 @@ int main(int argc, char **argv) {
     h_Cross_YXc1->SetTitleSize(0.05, "X");
     h_Cross_YXc1->SetLabelSize(0.05, "X");
     h_Cross_YXc1->SetMaximum(h_Cross_YXc1->GetMaximum() / 5.);
-    h_Cross_YXc1->SetMinimum(3);
+    h_Cross_YXc1->SetMinimum(1.5);
     h_Cross_YXc1->Draw("col");
     DrawActiveArea();
     c2->Print(Form("Figs/Cross_YXc1_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
