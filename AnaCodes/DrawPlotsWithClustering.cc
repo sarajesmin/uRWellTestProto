@@ -238,10 +238,10 @@ int main(int argc, char **argv) {
     int binx2 = h_n_uRwell_V_vs_U_MultiHitCl->GetNbinsX() + 1;
     int biny1 = h_n_uRwell_V_vs_U_MultiHitCl->GetYaxis()->FindBin(1);
     int biny2 = h_n_uRwell_V_vs_U_MultiHitCl->GetNbinsY() + 1;
-    double counts_integral = h_n_uRwell_V_vs_U_MultiHitCl->Integral();
+    double counts_integral = h_n_uRwell_V_vs_U_MultiHitCl->Integral(0, binx2, 0, biny2);
     int counts_has_U_Cluster = h_n_uRwell_V_vs_U_MultiHitCl->Integral(binx1, binx2, 1, biny2);
     int counts_has_V_Cluster = h_n_uRwell_V_vs_U_MultiHitCl->Integral(1, binx2, biny1, biny2);
-    int counts_has_AnyCluster = h_n_uRwell_V_vs_U_MultiHitCl->Integral() - h_n_uRwell_V_vs_U_MultiHitCl->GetBinContent(1, 1);
+    int counts_has_AnyCluster = counts_integral - h_n_uRwell_V_vs_U_MultiHitCl->GetBinContent(1, 1);
     int counts_has_U_AND_V_Cluster = h_n_uRwell_V_vs_U_MultiHitCl->Integral(binx1, binx2, biny1, biny2);
     h_n_uRwell_V_vs_U_MultiHitCl->SetAxisRange(0, 10., "Y");
     h_n_uRwell_V_vs_U_MultiHitCl->SetAxisRange(0, 10., "X");
