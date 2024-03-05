@@ -65,6 +65,16 @@ namespace uRwellTools {
         double errLow_eff_crs_BgrSubtr; // Lower Error on eff_crs_BgrSubtr
     };
 
+    /*
+     * This object contains some summary information about the ADC distribution that is fitted with a Landau function.
+     */
+    struct ADC_Distribution{
+        double MPV;
+        double errMPV;
+        double Mean;
+        double errMean;
+    };
+    
     const double OneSigma = 0.683;
 
     const int clStripGap = 2; // The Max length of the gap in between strips with a given cluster 
@@ -95,6 +105,14 @@ namespace uRwellTools {
     const double uRWell_Y_min = -250.; // mm
     const double uRwell_XTop = 728.;
     const double uRwell_XBot = 510.;
+    
+    /*
+     * This function takes the h_in histogram, which is intended to be the ADC distributions that supposed to look
+     * like a Landau distribution.
+     * It will fit this distribution with a Landau function, then return "ADC_Distribution" object which will contain
+     * MPV and mean values of the distributions.
+     */
+    ADC_Distribution CalcMPVandMean(TH1D*);
 
     /*
      * This function takes the h_in histogram as a first argument, and the 2nd argument is and addresses of uRwellEff 

@@ -42,6 +42,26 @@ int uRwellTools::getSlot(int ch) {
 
 int uRwellTools::slot_Offset[uRwellTools::nSlot] = {0, 64, 192, 1448, 320, 1576, 1000, 1064, 1192, 448, 1320, 576};
 
+uRwellTools::ADC_Distribution uRwellTools::CalcMPVandMean(TH1D* h_in) {
+
+    TF1 *f_Landau = new TF1("f_Landau", "[0]*TMath::Landau(x, [1], [2])", 0., 1000.);
+    f_Landau->SetNpx(4500);
+
+    f_Landau->SetParameters(5. * h_in->GetMaximum(), h_in->GetBinCenter(h_in->GetMaximumBin()), 10);
+    h_in->Fit(f_Landau, "MeV", "", 0., 500);
+
+    ADC_Distribution distr;
+
+    distr.MPV = f_Landau->GetParameter(1);
+    distr.errMPV = f_Landau->GetParError(1);
+    distr.Mean = h_in->GetMean();
+    distr.errMean = h_in->GetMeanError();
+
+    delete f_Landau;
+    
+    return distr;
+}
+
 void uRwellTools::CalcEfficiencies(TH2* h_in, uRwellTools::uRwellEff &eff) {
     int binx1 = h_in->GetXaxis()->FindBin(1);
     int binx2 = h_in->GetNbinsX() + 1;
@@ -236,16 +256,16 @@ namespace uRwellTools {
 
     }
 
-    const void uRwellCross::PrintCross(){
-        cout<<" ============== CRoss ============= "<<endl;
-        cout<<"*  Strip U: "<<fStripU<<"      Strip V: "<<fStripV<<endl;
-        cout<<"*  Cross (X, Y) = ("<<fCrossX<<","<<fCrossY<<")"<<endl;
-        cout<<"*  Slot U    = "<<fSlotU<<endl;
-        cout<<"*  Slot V    = "<<fSlotV<<endl;
-        cout<<"*  group U   = "<<fgrU<<endl;
-        cout<<"*  group V   = "<<fgrV<<endl;
-        cout<<"*  group ID  = "<<fGroupID<<endl;
-        cout<<endl<<endl;        
+    const void uRwellCross::PrintCross() {
+        cout << " ============== CRoss ============= " << endl;
+        cout << "*  Strip U: " << fStripU << "      Strip V: " << fStripV << endl;
+        cout << "*  Cross (X, Y) = (" << fCrossX << "," << fCrossY << ")" << endl;
+        cout << "*  Slot U    = " << fSlotU << endl;
+        cout << "*  Slot V    = " << fSlotV << endl;
+        cout << "*  group U   = " << fgrU << endl;
+        cout << "*  group V   = " << fgrV << endl;
+        cout << "*  group ID  = " << fGroupID << endl;
+        cout << endl << endl;
     }
 
     std::vector<uRwellCluster> getGlusters(std::vector<uRwellHit> v_Hits) {
