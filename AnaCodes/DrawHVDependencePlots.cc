@@ -21,6 +21,7 @@
 #include <TLegend.h>
 #include <TEfficiency.h>
 #include <TMultiGraph.h>
+#include <TGraphErrors.h>
 #include <TGraphAsymmErrors.h>
 
 #include <uRwellTools.h>
@@ -69,11 +70,28 @@ int main(int argc, char **argv) {
     mv_runs[1] = {1731, 1745, 1750, 1753, 1790, 1761, 1779};
     mv_runs[2] = {1824, 1826, 1828, 1833, 1835, 1837, 1840, 1848, 1852};
     mv_runs[3] = {1854, 1855, 1857, 1852, 1859, 1861, 1866};
-    mv_runs[4] = {18660, 18661, 18662, 18663, 18664, 18665, 18666, 18667, 18668, 18669, 186610, 186611, 186612, 186613, 186614, 186615, 186616, 186617 };
-    mv_runs[5] = {18720, 18721, 18722, 18723, 18724, 18725, 18726, 18727, 18728, 18729, 187210, 187211, 187212, 187213, 187214, 187215, 187216, 187217, 187218, 187219 };
+    mv_runs[4] = {18660, 18661, 18662, 18663, 18664, 18665, 18666, 18667, 18668, 18669, 186610, 186611, 186612, 186613, 186614, 186615, 186616, 186617};
+    mv_runs[5] = {18720, 18721, 18722, 18723, 18724, 18725, 18726, 18727, 18728, 18729, 187210, 187211, 187212, 187213, 187214, 187215, 187216, 187217, 187218, 187219};
     mv_runs[6] = {18770, 18771, 18772, 18773, 18774, 18775, 18776, 18777, 18778, 18779, 187710, 187711, 187712, 187713, 187714, 187715, 187716};
     mv_runs[7] = {18800, 18801, 18802};
-    mv_runs[8] = {18830, 18831, 18832, 18833, 18834, 18835, 18836, 18837, 18838, 18839, 188310, 188311, 188312, 188313};
+    mv_runs[8] = {18830, 18831, 18832, 18833, 18834, 18835, 18836, 18837, 18838, 18839, 188310, 188311, 188312, 188313, 188314, 188315, 188316, 188317, 188318, 188319,
+        188320, 188321, 188322, 188323, 188324, 188325, 188326, 188327, 188328, 188329,
+        188330, 188331, 188332, 188333};
+    mv_runs[9] = {18590, 18591, 18592, 18593, 18594, 18595, 18596, 18597, 18598, 18599, 185910, 185911, 185912, 185913};
+    mv_runs[10] = {18880, 18881, 18882, 18883, 18884, 18885, 18886, 18887, 18888, 18889, 188810, 188811, 188812, 188813, 188814, 188815, 188816, 188817, 188818, 188819,
+        188820, 188821, 188822, 188823, 188824, 188825, 188826, 188827, 188828, 188829, 188830, 188831, 188832, 188833, 188834, 188835, 188836, 188837, 188838, 188839,
+        188840, 188841, 188842, 188843, 188844, 188845, 188846, 188847, 188848, 188849, 188850, 188851, 188852, 188853, 188854, 188855, 188856, 188857, 188858, 188859,
+        188860, 188861, 188862, 188863, 188864, 188865, 188866, 188867, 188868, 188869, 188870, 188871, 188872, 188873, 188874, 188875, 188876, 188877, 188878, 188879,
+        188880, 188881, 188882, 188883, 188884, 188885, 188886, 188887, 188888, 188889, 188890, 188891, 188892, 188893, 188894, 188895, 188896, 188897, 188898, 188899,
+        1888100, 1888101, 1888102, 1888103, 1888104};
+    mv_runs[11] = {19210, 19211, 19212, 19213, 19214, 19215, 19216};
+    mv_runs[12] = {19340, 19341, 19342, 19343, 19344, 19345, 19346, 19347, 19348, 19349, 193410, 193411, 193412, 193413, 193414, 193415};
+    mv_runs[13] = {19360, 19361, 19362, 19363, 19364, 19365, 19366};
+    mv_runs[14] = {19460, 19461, 19462, 19463, 19464, 19465, 19466, 19467, 19468, 19469,         194611, 194612, 194613, 194614, 194615, 194616, 194617, 194618, 194619,
+    194621, 194622, 194623, 194624, 194625, 194626, 194627, 194628, 194629, 194630, 194631, 194632};
+    mv_runs[15] = {19730, 19731, 19732, 19733, 19734, 19735, 19736, 19737, 19738, 19739, 197310, 197311, 197312, 197313, 197314, 197315, 197316, 197317, 197318};
+    mv_runs[16] = {19860, 19861, 19862, 19863, 19864, 19865, 19866, 19867, 19868, 19869, 198610, 198611, 198612, 198613, 198614, 198615, 198616, 198617, 198618, 198619,
+                  198620, 198621, 198622, 198623, 198624, 198625, 198626};
     std::map<int, double> m_MESH_HV; // The key is the run number, the value is the MESH_HV
     std::map<int, double> m_Cathode_HV; // The key is the run number, the value is the Cathode_HV
     std::map<int, double> m_Drift_HV; // The key is the run number, the value is the Drift_HV = Hathode_HV - MESH_HV
@@ -87,10 +105,18 @@ int main(int argc, char **argv) {
     m_HVType[6] = "FILE_IND";
     m_HVType[7] = "FILE_IND";
     m_HVType[8] = "FILE_IND";
-    
-    
+    m_HVType[9] = "FILE_IND";
+    m_HVType[10] = "FILE_IND";
+    m_HVType[11] = "FILE_IND";
+    m_HVType[12] = "FILE_IND";
+    m_HVType[13] = "FILE_IND";
+    m_HVType[14] = "FILE_IND";
+    m_HVType[15] = "FILE_IND";
+    m_HVType[16] = "FILE_IND";
+
+
     std::map<int, std::string> m_XTitle;
-    
+
     m_XTitle[1] = "MESH HV [V]";
     m_XTitle[2] = "MESH HV [V]";
     m_XTitle[3] = "DRIFT HV [V]";
@@ -99,6 +125,12 @@ int main(int argc, char **argv) {
     m_XTitle[6] = "File number";
     m_XTitle[7] = "File number";
     m_XTitle[8] = "File number";
+    m_XTitle[9] = "File number";
+    m_XTitle[10] = "File number";
+    m_XTitle[11] = "File number";
+    m_XTitle[13] = "File number";
+    m_XTitle[14] = "File number";
+    m_XTitle[16] = "File number";
 
     TCanvas *c1 = new TCanvas("c1", "", 950, 950);
     c1->SetTopMargin(0.02);
@@ -131,6 +163,27 @@ int main(int argc, char **argv) {
     gr_Eff_Ratio_V_Over_U->SetMarkerStyle(20);
     gr_Eff_Ratio_V_Over_U->SetMarkerColor(2);
     gr_Eff_Ratio_V_Over_U->SetMarkerSize(2);
+
+    TGraphErrors *gr_ADC_MPV_U = new TGraphErrors();
+    gr_ADC_MPV_U->SetMarkerStyle(20);
+    gr_ADC_MPV_U->SetMarkerColor(2);
+    gr_ADC_MPV_U->SetMarkerSize(2);
+
+    TGraphErrors *gr_ADC_MPV_V = new TGraphErrors();
+    gr_ADC_MPV_V->SetMarkerStyle(21);
+    gr_ADC_MPV_V->SetMarkerColor(4);
+    gr_ADC_MPV_V->SetMarkerSize(2);
+
+    TGraphErrors *gr_ADC_GEM_X = new TGraphErrors();
+    gr_ADC_GEM_X->SetMarkerStyle(22);
+    gr_ADC_GEM_X->SetMarkerColor(6);
+    gr_ADC_GEM_X->SetMarkerSize(2);
+
+    TGraphErrors *gr_ADC_GEM_Y = new TGraphErrors();
+    gr_ADC_GEM_Y->SetMarkerStyle(23);
+    gr_ADC_GEM_Y->SetMarkerColor(7);
+    gr_ADC_GEM_Y->SetMarkerSize(2);
+
 
     std::string hvTablefileName = Form("HV_Table_%d.dat", series);
     ifstream inp_HVTable(hvTablefileName.c_str());
@@ -207,16 +260,38 @@ int main(int argc, char **argv) {
 
         //cout<<eff.errLow_eff_U<<"  "<<eff.errUp_eff_U<<endl;
 
-        TH1D *h_U_PeakADC_MultiCl1 = (TH1D*)file_in->Get("h_U_PeakADC_MultiCl1");
+        TH1D *h_U_PeakADC_MultiCl1 = (TH1D*) file_in->Get("h_U_PeakADC_MultiCl1");
         h_U_PeakADC_MultiCl1->SetAxisRange(0., 500., "X");
-        
-        
+        TH1D *h_V_PeakADC_MultiCl1 = (TH1D*) file_in->Get("h_V_PeakADC_MultiCl1");
+        h_V_PeakADC_MultiCl1->SetAxisRange(0., 500., "X");
+        TH1D *h_MaxADC_GEM_X1 = (TH1D*) file_in->Get("h_MaxADC_GEM_X1");
+        TH1D *h_MaxADC_GEM_Y1 = (TH1D*) file_in->Get("h_MaxADC_GEM_Y1");
+
+        uRwellTools::ADC_Distribution distr_U = uRwellTools::CalcMPVandMean(h_U_PeakADC_MultiCl1);
+        uRwellTools::ADC_Distribution distr_V = uRwellTools::CalcMPVandMean(h_V_PeakADC_MultiCl1);
+        uRwellTools::ADC_Distribution distr_GEM_X = uRwellTools::CalcMPVandMean(h_MaxADC_GEM_X1);
+        uRwellTools::ADC_Distribution distr_GEM_Y = uRwellTools::CalcMPVandMean(h_MaxADC_GEM_Y1);
+
+        gr_ADC_MPV_U->SetPoint(i, HV_Value, distr_U.MPV);
+        gr_ADC_MPV_U->SetPointError(i, 0, distr_U.errMPV);
+        gr_ADC_MPV_V->SetPoint(i, HV_Value, distr_V.MPV);
+        gr_ADC_MPV_V->SetPointError(i, 0, distr_V.errMPV);
+        gr_ADC_GEM_X->SetPoint(i, HV_Value, distr_GEM_X.MPV);
+        gr_ADC_GEM_X->SetPointError(i, 0, distr_GEM_X.errMPV);
+        gr_ADC_GEM_Y->SetPoint(i, HV_Value, distr_GEM_Y.MPV);
+        gr_ADC_GEM_Y->SetPointError(i, 0, distr_GEM_Y.errMPV);
+
+
         delete h_Cross_YXc2;
         delete h_n_uRwell_V_vs_U_MultiHitCl;
+        delete h_U_PeakADC_MultiCl1;
+        delete h_V_PeakADC_MultiCl1;
+        delete h_MaxADC_GEM_X1;
+        delete h_MaxADC_GEM_Y1;
         delete file_in;
     }
 
-    TLegend *leg1 = new TLegend(0.12, 0.75, 0.4, 0.97);
+    TLegend *leg1 = new TLegend(0.12, 0.85, 0.3, 0.97);
     leg1->SetBorderSize(0);
     leg1->AddEntry(gr_Eff_U, "U Cluster");
     leg1->AddEntry(gr_Eff_V, "V Cluster");
@@ -229,7 +304,7 @@ int main(int argc, char **argv) {
     mtgr1->Add(gr_Eff_V);
     mtgr1->Add(gr_Eff_OR);
     mtgr1->Add(gr_Eff_AND);
-    mtgr1->Add(gr_Eff_CrsBgrSubtr);
+    //mtgr1->Add(gr_Eff_CrsBgrSubtr);
 
     mtgr1->Draw("APL");
     mtgr1->SetTitle(Form("; %s; Efficiency", m_XTitle[series].c_str()));
@@ -248,6 +323,28 @@ int main(int argc, char **argv) {
     c1->Print(Form("Figs/HV_EffRatio_U_Over_V_Dep_Thr_%1.1f_MinHits_%d_Series_%d.pdf", threshold, MinHits, series));
     c1->Print(Form("Figs/HV_EffRatio_U_Over_V_Dep_Thr_%1.1f_MinHits_%d_Series_%d.png", threshold, MinHits, series));
     c1->Print(Form("Figs/HV_EffRatio_U_Over_V_Dep_Thr_%1.1f_MinHits_%d_Series_%d.root", threshold, MinHits, series));
+
+    TLegend *leg2 = new TLegend(0.12, 0.85, 0.35, 0.97);
+    leg2->SetBorderSize(0);
+    leg2->AddEntry(gr_ADC_MPV_U, "U Strips");
+    leg2->AddEntry(gr_ADC_MPV_V, "V Strips");
+    leg2->AddEntry(gr_ADC_GEM_X, "GEM X");
+    leg2->AddEntry(gr_ADC_GEM_Y, "GEM Y");
+
+    TMultiGraph *mtgr_ADC_MPV = new TMultiGraph();
+    mtgr_ADC_MPV->Add(gr_ADC_MPV_U);
+    mtgr_ADC_MPV->Add(gr_ADC_MPV_V);
+    mtgr_ADC_MPV->Add(gr_ADC_GEM_X);
+    mtgr_ADC_MPV->Add(gr_ADC_GEM_Y);
+    mtgr_ADC_MPV->Draw("APL");
+    mtgr_ADC_MPV->SetTitle(Form("; %s; MPV [ADC]", m_XTitle[series].c_str()));
+    mtgr_ADC_MPV->SetMaximum(80);
+    mtgr_ADC_MPV->SetMinimum(20);
+    leg2->Draw();
+    c1->Print(Form("Figs/HV_MPV_Dependence_Thr_%1.1f_MinHits_%d_Series_%d.pdf", threshold, MinHits, series));
+    c1->Print(Form("Figs/HV_MPV_Dependence_Thr_%1.1f_MinHits_%d_Series_%d.png", threshold, MinHits, series));
+    c1->Print(Form("Figs/HV_MPV_Dependence_Thr_%1.1f_MinHits_%d_Series_%d.root", threshold, MinHits, series));
+
 
     return 0;
 }
