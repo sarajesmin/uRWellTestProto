@@ -67,10 +67,10 @@ void uRwellTools::CalcEfficiencies(TH2* h_in, uRwellTools::uRwellEff &eff) {
     int binx2 = h_in->GetNbinsX() + 1;
     int biny1 = h_in->GetYaxis()->FindBin(1);
     int biny2 = h_in->GetNbinsY() + 1;
-    double counts_integral = h_in->Integral();
+    double counts_integral = h_in->Integral(0, binx2, 0, biny2);
     double counts_has_U_Cluster = h_in->Integral(binx1, binx2, 1, biny2);
     double counts_has_V_Cluster = h_in->Integral(1, binx2, biny1, biny2);
-    double counts_has_AnyCluster = h_in->Integral() - h_in->GetBinContent(1, 1);
+    double counts_has_AnyCluster = counts_integral - h_in->GetBinContent(1, 1);
     double counts_has_U_AND_V_Cluster = h_in->Integral(binx1, binx2, biny1, biny2);
 
     eff.eff_U = 100. * counts_has_U_Cluster / counts_integral;

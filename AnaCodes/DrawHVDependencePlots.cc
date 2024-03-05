@@ -215,7 +215,7 @@ int main(int argc, char **argv) {
         TFile *file_in = new TFile(Form("AnaClustering_%d_Thr_%1.1f_MinHits_%d.root", run, threshold, MinHits));
 
         TH2D *h_n_uRwell_V_vs_U_MultiHitCl = (TH2D*) file_in->Get("h_n_uRwell_V_vs_U_MultiHitCl");
-        double All_GoodEventts = h_n_uRwell_V_vs_U_MultiHitCl->Integral();
+        double All_GoodEventts = h_n_uRwell_V_vs_U_MultiHitCl->Integral( 0, h_n_uRwell_V_vs_U_MultiHitCl->GetNbinsX() + 1, 0, h_n_uRwell_V_vs_U_MultiHitCl->GetNbinsY() + 1 );
 
         uRwellTools::CalcEfficiencies(h_n_uRwell_V_vs_U_MultiHitCl, eff);
 
