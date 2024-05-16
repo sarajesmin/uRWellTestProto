@@ -18,7 +18,7 @@ void DrawPedestals(int run) {
 
     if (run < 0) {
         cout << "Run number has to be above 0. End program " << endl;
-        exit;
+        exit(1);
     }
     const int n_ts = 9;
 
@@ -187,8 +187,6 @@ void DrawPedestals(int run) {
     c1->Print(Form("Figs/ped_RMS_GEM_globalVew_%d.pdf", run));
     c1->Print(Form("Figs/ped_RMS_GEM_globalVew_%d.png", run));
     c1->Print(Form("Figs/ped_RMS_GEM_globalVew_%d.root", run));
-
-    return 0;
 }
 
 void DrawHybridLimits(TGraph* gr) {
