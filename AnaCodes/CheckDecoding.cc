@@ -64,7 +64,7 @@ int main(int argc, char** argv) {
 
     TFile *file_out = new TFile(Form("CheckDecoding_%d_%d.root", run, fnum), "Recreate");
     TH2D *h_ADC_chan = new TH2D("h_ADC_chan", "", 1711, -0.5, 1710.5, 400, -400., 400.);
-    TH2D *h_ADC_chan_GEM = new TH2D("h_ADC_chan_GEM", "", 258, -0.5, 257.5, 400, -400., 400.);
+    TH2D *h_ADC_chan_GEM = new TH2D("h_ADC_chan_GEM", "", 1258, -0.5, 1257.5, 400, -400., 400.);
     TH2D *h_ADC_AllChan = new TH2D("h_ADC_AllChan", "", 1711, -0.5, 1710.5, 400, -600., 600.);
     TH2D * h_ADC_Chan_ts_[n_ts];
 
@@ -197,7 +197,7 @@ int main(int argc, char** argv) {
                     h_ADC_AllChan->Fill(uniqueChan, ADC);
                     m_ADC_[ts][uniqueChan] = ADC;
                 } else if (sector == 8) {
-                    m_ADC_GEM_[ts][channel] = ADC; //For GEM we will use just the channel
+                    m_ADC_GEM_[ts][uniqueChan] = ADC; // For GEM we will use the uniquechannel as well
                 }
             }
 
