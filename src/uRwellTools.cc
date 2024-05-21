@@ -32,7 +32,7 @@ int uRwellTools::getSlot(int ch) {
         return 10;
     } else if (ch >= 1449 && ch <= 1576) {
         return 3;
-    } else if (ch >= 1577 && ch <= 11704) {
+    } else if (ch >= 1577 && ch <= 1704) {
         return 5;
     } else {
         return -1; // Should not happen, non existing slot
