@@ -95,6 +95,8 @@ int main(int argc, char** argv) {
 
     const int layer_U_uRwell = 1;
     const int layer_V_uRwell = 2;
+    const int layer_X_GEM = 1;
+    const int layer_Y_GEM = 2;
     const int sec_uRwell = 6;
     const int sec_GEM = 8;
     const double GEMHighThreshold = 10.; // 10 Sigma
@@ -213,9 +215,9 @@ int main(int argc, char** argv) {
 
                     v_GEMHits.push_back(curHit);
 
-                    if (curHit.strip < 128) {
+                    if (curHit.layer == layer_X_GEM) {
                         v_X_GEMHits.push_back(curHit);
-                    } else {
+                    } else if( curHit.layer == layer_Y_GEM ) {
                         v_Y_GEMHits.push_back(curHit);
                     }
                 }
@@ -226,6 +228,9 @@ int main(int argc, char** argv) {
 
             vector<uRwellCluster> v_U_Clusters = uRwellTools::getGlusters(v_U_Hits_uRwell);
             vector<uRwellCluster> v_V_Clusters = uRwellTools::getGlusters(v_V_Hits_uRwell);
+
+            vector<uRwellCluster> v_Y_GEM_Clusters = uRwellTools::getGlusters(v_Y_GEMHits);
+            vector<uRwellCluster> v_X_GEM_Clusters = uRwellTools::getGlusters(v_X_GEMHits);
 
 
             //            for (auto curClust : v_U_Clusters) {
