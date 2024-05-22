@@ -108,6 +108,7 @@ int main(int argc, char** argv) {
 
     TFile *file_out = new TFile(Form("AnaClustering_%d_Thr_%1.1f_MinHits_%d.root", run, HitThr, MinClSize), "Recreate");
     TH2D h_n_GEM_vs_uRwellHits("h_n_GEM_vs_uRwellHits", "", 31, -0.5, 30, 31, -0.5, 30);
+    TH2D h_n_GEM_Y_vs_X_Clusters1("h_n_GEM_Y_vs_X_Clusters1", "", 11, -0.5, 10.5, 11, -0.5, 10.5);
     TH2D h_n_V_vs_U_hits1("h_n_V_vs_U_hits1", "", 26, -0.5, 25.5, 26, -0.5, 25.5);
 
     TH1D h_U_HitStrip1("h_U_HitStrip1", "", 706, -0.5, 705.5);
@@ -233,20 +234,20 @@ int main(int argc, char** argv) {
             vector<uRwellCluster> v_X_GEM_Clusters = uRwellTools::getGlusters(v_X_GEMHits);
 
 
-            //            for (auto curClust : v_U_Clusters) {
-            //                cout << "    ******** Cluster ********* " << endl;
-            //                cout << "Number of hits      " << curClust.getHits()->size() << endl;
-            //                cout << "The AvgStrip is     " << curClust.getAvgStrip() << endl;
-            //                cout << "The PeakADC is      " << curClust.getPeakADC() << endl;
-            //
-            //                vector<uRwellHit> *curHits = curClust.getHits();
-            //
-            //                for (auto curHit : *curHits) {
-            //                    cout << "               **** Hit ***** " << endl;
-            //                    cout<<"         ADC is            "<<curHit.adc <<endl;
-            //                    cout<<"         Strip is          "<<curHit.strip <<endl;
-            //                }
-            //            }
+//            for (auto curClust : v_Y_GEM_Clusters) {
+//                cout << "    ******** Cluster ********* " << endl;
+//                cout << "Number of hits      " << curClust.getHits()->size() << endl;
+//                cout << "The AvgStrip is     " << curClust.getAvgStrip() << endl;
+//                cout << "The PeakADC is      " << curClust.getPeakADC() << endl;
+//
+//                vector<uRwellHit> *curHits = curClust.getHits();
+//
+//                for (auto curHit : *curHits) {
+//                    cout << "               **** Hit ***** " << endl;
+//                    cout << "         ADC is            " << curHit.adc << endl;
+//                    cout << "         Strip is          " << curHit.strip << endl;
+//                }
+//            }
 
             for (auto curHit : v_U_Hits_uRwell) {
 
@@ -299,7 +300,12 @@ int main(int argc, char** argv) {
 
             int n_GEMHits_X = 0;
             int n_GEMHits_Y = 0;
+            
+            int n_GEM_Y_Cl = v_Y_GEM_Clusters.size();
+            int n_GEM_X_Cl = v_X_GEM_Clusters.size();
 
+            h_n_GEM_Y_vs_X_Clusters1.Fill(n_GEM_X_Cl, n_GEM_Y_Cl);
+            
             for (int iGEMHit = 0; iGEMHit < v_GEMHits.size(); iGEMHit++) {
 
                 if (v_GEMHits.at(iGEMHit).strip < 128) {
@@ -357,7 +363,7 @@ int main(int argc, char** argv) {
 
             h_n_GEM_Y_vs_X_Hits1.Fill(n_GEMHits_X, n_GEMHits_Y);
 
-            if (n_GEMHits_X >= 2 && n_GEMHits_Y >= 2) {
+            if (n_GEM_Y_Cl == 1 && n_GEM_X_Cl == 1) {
                 h_n_uRwell_V_vs_U_MultiHitCl.Fill(n_U_MultiHit_clusters, n_V_MultiHit_clusters);
 
                 for (int iUcl = 0; iUcl < v_U_Clusters.size(); iUcl++) {
@@ -433,7 +439,7 @@ int main(int argc, char** argv) {
                         h_Cross_YXc_Weighted3.Fill(crsX, crsY, cl_ADC_Tot);
                     }
 
-                    if (n_GEMHits_X >= 2 && n_GEMHits_Y >= 2) {
+                    if (n_GEM_Y_Cl == 1 && n_GEM_X_Cl == 1) {
                         h_Cross_YXc2.Fill(crsX, crsY);
                         h_Cross_YXc_Weighted2.Fill(crsX, crsY, cl_ADC_Tot);
                     }

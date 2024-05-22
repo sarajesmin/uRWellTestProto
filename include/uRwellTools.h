@@ -78,8 +78,9 @@ namespace uRwellTools {
     const double OneSigma = 0.683;
 
     const int clStripGap = 2; // The Max length of the gap in between strips with a given cluster 
-    int getSlot(int ch);
-    const int nSlot = 12; // The test Prototype has only 12 slots
+    int getURwellSlot(int ch);
+    int getGEMSlot(int ch);
+    const int nSlot = 16; // The test Prototype has only 12 slots
     extern int slot_Offset[nSlot]; // Gives the 1st strip channel (unique channel) for the given slot
 
     const double Y_top_edge = 250;

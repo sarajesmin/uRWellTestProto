@@ -23,7 +23,6 @@
 #include <uRwellTools.h>
 
 using namespace std;
-int getSlot(int uniqueChannel);
 
 struct uRwellHit {
     int sector;
@@ -38,6 +37,7 @@ struct uRwellHit {
 
 
 bool fileExists(const char* filename);
+
 /*
  * 
  */
@@ -56,13 +56,13 @@ int main(int argc, char** argv) {
         //sprintf(inputFile, "Data/decoded_%d.hipo", run);
         sprintf(outputFile, "Skim_ZeroSuppr_%d_%d.hipo", run, fnum);
         std::string outFileName_Str = outputFile;
-                
-        if( fileExists(outputFile) ){
-            cout<<"The file "<<outFileName_Str.c_str()<<" exists. The program will not run"<<endl;
-            cout<<"Exiting"<<endl;
+
+        if (fileExists(outputFile)) {
+            cout << "The file " << outFileName_Str.c_str() << " exists. The program will not run" << endl;
+            cout << "Exiting" << endl;
             exit(1);
         }
-        
+
     } else {
         std::cout << " *** please provide a run number..." << std::endl;
         exit(0);
@@ -94,8 +94,8 @@ int main(int argc, char** argv) {
 
     hipo::writer writer;
     writer.getDictionary().addSchema(sch);
-    writer.getDictionary().addSchema( factory.getSchema("RAW::adc") );
-    writer.getDictionary().addSchema( factory.getSchema("RUN::config") );
+    writer.getDictionary().addSchema(factory.getSchema("RAW::adc"));
+    writer.getDictionary().addSchema(factory.getSchema("RUN::config"));
     writer.open(outputFile);
 
     int __bank_Sec_INDEX_ = buRWellADC.getSchema().getEntryOrder("sector");
@@ -197,6 +197,8 @@ int main(int argc, char** argv) {
 
             std::map<int, double> m_ADC_uRWELL;
             std::map<int, double> m_ADCRel_uRWELL;
+            std::map<int, double> m_ADC_GEM;
+            std::map<int, double> m_ADCRel_GEM;
 
 
             for (int i = 0; i < n_uRwellADC; i++) {
@@ -212,37 +214,58 @@ int main(int argc, char** argv) {
                 if (sector == sec_GEM) {
                     //                    double ADC_OffsetCorrected = m_ped_GEM_mean[channel] - ADC;
                     //                    ADC_GEM_[channel-1] = ADC_GEM_[channel-1] + ADC_OffsetCorrected;
-                    ADC_GEM_[channel - 1] = ADC_GEM_[channel - 1] + ADC;
+                    //ADC_GEM_[channel - 1] = ADC_GEM_[channel - 1] + ADC;
 
                     //if (ADC == 0) {
                     //cout<<"Event# = "<<ev_Number<<"   channel = "<<channel<<"  ts = "<<ts << "   ADC = " << ADC << endl;
                     //}
+
+                    m_ADC_GEM[uniqueChan] += double(ADC);
                 } else if (sector == sec_uRWell) {
                     m_ADC_uRWELL[uniqueChan] = m_ADC_uRWELL[uniqueChan] + double(ADC);
                 }
 
             }
 
+//
+//            for (int ich = 0; ich < nGEMChannels; ich++) {
+//                ADC_GEM_[ich] = m_ped_GEM_mean[ich + 1] - ADC_GEM_[ich] / double(n_ts);
+//                ADCRel_GEM_[ich] = ADC_GEM_[ich] / m_ped_GEM_rms[ich + 1];
+//
+//                if (ADCRel_GEM_[ich] > sigm_threshold) {
+//                    uRwellHit curHit;
+//                    curHit.adc = ADC_GEM_[ich];
+//                    curHit.adcRel = ADCRel_GEM_[ich];
+//                    curHit.sector = sec_GEM;
+//                    curHit.layer = 0;
+//                    curHit.slot = 12 + ich / 128;
+//                    curHit.strip = ich;
+//                    curHit.stripLocal = ich % 128; // For GEM this doesn't have a good meaning without knowing the strip to connector internal mapping
+//                    curHit.ts = 0; // For now we will not prserve the hit time information
+//                    v_GEM_Hits.push_back(curHit);
+//                }
+//            }
 
             vector<uRwellHit> v_GEM_Hits;
-            for (int ich = 0; ich < nGEMChannels; ich++) {
-                ADC_GEM_[ich] = m_ped_GEM_mean[ich + 1] - ADC_GEM_[ich] / double(n_ts);
-                ADCRel_GEM_[ich] = ADC_GEM_[ich] / m_ped_GEM_rms[ich + 1];
+            for (auto it = m_ADC_GEM.begin(); it != m_ADC_GEM.end(); ++it) {
+                int ch = it->first;
 
-                if (ADCRel_GEM_[ich] > sigm_threshold) {
+                m_ADC_GEM[ch] = m_ped_GEM_mean[ch] - m_ADC_GEM[ch] / double(n_ts);
+                m_ADCRel_GEM[ch] = m_ADC_GEM[ch] / m_ped_GEM_rms[ch];
+
+                if (m_ADCRel_GEM[ch] > sigm_thresholduRwell) {
                     uRwellHit curHit;
-                    curHit.adc = ADC_GEM_[ich];
-                    curHit.adcRel = ADCRel_GEM_[ich];
+                    curHit.adc = m_ADC_GEM[ch];
+                    curHit.adcRel = m_ADCRel_GEM[ch];
                     curHit.sector = sec_GEM;
-                    curHit.layer = 0;
-                    curHit.slot = 12 + ich / 128;
-                    curHit.strip = ich;
-                    curHit.stripLocal = ich%128; // For GEM this doesn't have a good meaning without knowing the strip to connector internal mapping
-                    curHit.ts = 0; // For now we will not prserve the hit time information
+                    curHit.layer = 1 + ch/1000;
+                    curHit.slot = uRwellTools::getGEMSlot(ch);
+                    curHit.strip = ch % 1000;
+                    curHit.stripLocal = ch - uRwellTools::slot_Offset[curHit.slot];
+                    curHit.ts = 0;
                     v_GEM_Hits.push_back(curHit);
                 }
             }
-
 
             vector<uRwellHit> v_uRwell_Hits;
             for (auto it = m_ADC_uRWELL.begin(); it != m_ADC_uRWELL.end(); ++it) {
@@ -256,7 +279,7 @@ int main(int argc, char** argv) {
                     curHit.adcRel = m_ADCRel_uRWELL[ch];
                     curHit.sector = sec_uRWell;
                     curHit.layer = 1 + ch / 1000;
-                    curHit.slot = getSlot(ch);
+                    curHit.slot = uRwellTools::getURwellSlot(ch);
                     curHit.strip = ch % 1000;
                     curHit.stripLocal = ch - uRwellTools::slot_Offset[curHit.slot];
                     curHit.ts = 0;
@@ -317,38 +340,6 @@ int main(int argc, char** argv) {
     writer.showSummary();
 
     return 0;
-}
-
-int getSlot(int ch) {
-
-    if (ch <= 64) {
-        return 0;
-    } else if (ch >= 65 && ch <= 192) {
-        return 1;
-    } else if (ch >= 193 && ch <= 320) {
-        return 2;
-    } else if (ch >= 321 && ch <= 448) {
-        return 4;
-    } else if (ch >= 449 && ch <= 576) {
-        return 9;
-    } else if (ch >= 577 && ch <= 704) {
-        return 11;
-    } else if (ch >= 1001 && ch <= 1064) {
-        return 6;
-    } else if (ch >= 1065 && ch <= 1192) {
-        return 7;
-    } else if (ch >= 1193 && ch <= 1320) {
-        return 8;
-    } else if (ch >= 1321 && ch <= 1448) {
-        return 10;
-    } else if (ch >= 1449 && ch <= 1576) {
-        return 3;
-    } else if (ch >= 1577 && ch <= 11704) {
-        return 5;
-    } else {
-        return -1; // Should not happen, non existing slot
-    }
-
 }
 
 bool fileExists(const char* filename) {

@@ -8,7 +8,31 @@
 
 using namespace std;
 
-int uRwellTools::getSlot(int ch) {
+int uRwellTools::getGEMSlot(int ch) {
+
+    if (ch < 1 || ch > 1256) {
+        cout << "This should not happen: GEM channel is " << ch << endl;
+        cout << "Exiting" << endl;
+        exit(1);
+    }
+
+    if (ch <= 128) {
+        return 12;
+    } else if (ch >= 129 && ch <= 256) {
+        return 13;
+    } else if (ch >= 1001 && ch <= 1128) {
+        return 14;
+    } else if (ch >= 1129 && ch <= 1256) {
+        return 15;
+    }else {
+        cout << "This should not happen: GEM channel is " << ch << endl;
+        cout << "Exiting" << endl;
+        exit(1);
+    }
+
+}
+
+int uRwellTools::getURwellSlot(int ch) {
 
     if (ch <= 64) {
         return 0;
@@ -40,7 +64,7 @@ int uRwellTools::getSlot(int ch) {
 
 }
 
-int uRwellTools::slot_Offset[uRwellTools::nSlot] = {0, 64, 192, 1448, 320, 1576, 1000, 1064, 1192, 448, 1320, 576};
+int uRwellTools::slot_Offset[uRwellTools::nSlot] = {0, 64, 192, 1448, 320, 1576, 1000, 1064, 1192, 448, 1320, 576, 0, 128, 1000, 1128};
 
 uRwellTools::ADC_Distribution uRwellTools::CalcMPVandMean(TH1D* h_in) {
 
@@ -58,7 +82,7 @@ uRwellTools::ADC_Distribution uRwellTools::CalcMPVandMean(TH1D* h_in) {
     distr.errMean = h_in->GetMeanError();
 
     delete f_Landau;
-    
+
     return distr;
 }
 
@@ -240,8 +264,8 @@ namespace uRwellTools {
             fCrossX = getCrossX(fStripU, fStripV);
             fCrossY = getCrossY(fStripU, fStripV);
 
-            fSlotU = getSlot(int (fStripU));
-            fSlotV = getSlot(int (1000 + fStripV)); // We add 1000, because the the getSlot( ) function as an argument takes global strip number i, 1 to 1704
+            fSlotU = getURwellSlot(int (fStripU));
+            fSlotV = getURwellSlot(int (1000 + fStripV)); // We add 1000, because the the getURwellSlot( ) function as an argument takes global strip number i, 1 to 1704
 
             fgrU = (std::lower_bound(gr_UBounderies.begin(), gr_UBounderies.end(), fStripU) - gr_UBounderies.begin()) - 1;
             fgrV = (std::lower_bound(gr_VBounderies.begin(), gr_VBounderies.end(), fStripV) - gr_VBounderies.begin()) - 1;
