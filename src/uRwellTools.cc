@@ -24,7 +24,7 @@ int uRwellTools::getGEMSlot(int ch) {
         return 14;
     } else if (ch >= 1129 && ch <= 1256) {
         return 15;
-    }else {
+    } else {
         cout << "This should not happen: GEM channel is " << ch << endl;
         cout << "Exiting" << endl;
         exit(1);
@@ -208,6 +208,33 @@ void uRwellTools::DrawGroupStripBiundaries() {
 
 namespace uRwellTools {
 
+    uRwellCluster getMaxAdcCluster(std::vector<uRwellCluster> &v_clusters, int MinHits) {
+        int ind_Max = 0;
+        double ADC_Max = 0;
+
+        for (int ind = 0; ind < v_clusters.size(); ind++) {
+
+            if (v_clusters.at(ind).getHits()->size() < MinHits) {
+                continue;
+            }
+
+            if (v_clusters.at(ind).getPeakADC() > ADC_Max) {
+                ADC_Max = v_clusters.at(ind).getPeakADC();
+                ind_Max = ind;
+            }
+        }
+
+        // Check if there is such a cluster, otherwise make a new cluster with 0
+        // energy that easily can be checked 
+        if (ADC_Max > 0) {
+            return v_clusters.at(ind_Max);
+        }else{
+            uRwellCluster tmp;
+            tmp.setEnergy(0);
+            return tmp;
+        }
+    }
+
     uRwellCluster::uRwellCluster() {
         fnStrips = 0;
         fEnergy = 0;
@@ -244,6 +271,9 @@ namespace uRwellTools {
     void uRwellCluster::FinalizeCluster() {
         findPeakEnergy();
         findAvgStrip();
+    }
+
+    uRwellCross::uRwellCross() {
     }
 
     uRwellCross::uRwellCross(double stripU, double stripV) {

@@ -148,6 +148,7 @@ namespace uRwellTools {
 
     void DrawGroupStripBiundaries();
 
+    
     class uRwellCluster {
     public:
         uRwellCluster();
@@ -192,6 +193,7 @@ namespace uRwellTools {
 
     class uRwellCross {
     public:
+        uRwellCross();
         uRwellCross(double stripU, double stripV); // stripU and stripV are cluster centers in units of strip numbers, they don't have to be integer
 
         const double getStripU() {
@@ -247,6 +249,8 @@ namespace uRwellTools {
     std::vector<uRwellCluster> getGlusters(std::vector<uRwellHit>);
     double getCrossX(double strip_U, double strip_V); // returns Cross UxV cross X coordinate
     double getCrossY(double strip_U, double strip_V); // returns Cross UxV cross Y coordinate
+    uRwellCluster getMaxAdcCluster(std::vector<uRwellCluster> &, int);
+    
 }
 
 #endif /* URWELLTOOLS_H */
