@@ -78,8 +78,9 @@ namespace uRwellTools {
     const double OneSigma = 0.683;
 
     const int clStripGap = 2; // The Max length of the gap in between strips with a given cluster 
-    int getSlot(int ch);
-    const int nSlot = 12; // The test Prototype has only 12 slots
+    int getURwellSlot(int ch);
+    int getGEMSlot(int ch);
+    const int nSlot = 16; // The test Prototype has only 12 slots
     extern int slot_Offset[nSlot]; // Gives the 1st strip channel (unique channel) for the given slot
 
     const double Y_top_edge = 250;
@@ -147,6 +148,7 @@ namespace uRwellTools {
 
     void DrawGroupStripBiundaries();
 
+    
     class uRwellCluster {
     public:
         uRwellCluster();
@@ -191,6 +193,7 @@ namespace uRwellTools {
 
     class uRwellCross {
     public:
+        uRwellCross();
         uRwellCross(double stripU, double stripV); // stripU and stripV are cluster centers in units of strip numbers, they don't have to be integer
 
         const double getStripU() {
@@ -246,6 +249,8 @@ namespace uRwellTools {
     std::vector<uRwellCluster> getGlusters(std::vector<uRwellHit>);
     double getCrossX(double strip_U, double strip_V); // returns Cross UxV cross X coordinate
     double getCrossY(double strip_U, double strip_V); // returns Cross UxV cross Y coordinate
+    uRwellCluster getMaxAdcCluster(std::vector<uRwellCluster> &, int);
+    
 }
 
 #endif /* URWELLTOOLS_H */

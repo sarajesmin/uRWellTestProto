@@ -8,7 +8,31 @@
 
 using namespace std;
 
-int uRwellTools::getSlot(int ch) {
+int uRwellTools::getGEMSlot(int ch) {
+
+    if (ch < 1 || ch > 1256) {
+        cout << "This should not happen: GEM channel is " << ch << endl;
+        cout << "Exiting" << endl;
+        exit(1);
+    }
+
+    if (ch <= 128) {
+        return 12;
+    } else if (ch >= 129 && ch <= 256) {
+        return 13;
+    } else if (ch >= 1001 && ch <= 1128) {
+        return 14;
+    } else if (ch >= 1129 && ch <= 1256) {
+        return 15;
+    } else {
+        cout << "This should not happen: GEM channel is " << ch << endl;
+        cout << "Exiting" << endl;
+        exit(1);
+    }
+
+}
+
+int uRwellTools::getURwellSlot(int ch) {
 
     if (ch <= 64) {
         return 0;
@@ -32,7 +56,7 @@ int uRwellTools::getSlot(int ch) {
         return 10;
     } else if (ch >= 1449 && ch <= 1576) {
         return 3;
-    } else if (ch >= 1577 && ch <= 11704) {
+    } else if (ch >= 1577 && ch <= 1704) {
         return 5;
     } else {
         return -1; // Should not happen, non existing slot
@@ -40,7 +64,7 @@ int uRwellTools::getSlot(int ch) {
 
 }
 
-int uRwellTools::slot_Offset[uRwellTools::nSlot] = {0, 64, 192, 1448, 320, 1576, 1000, 1064, 1192, 448, 1320, 576};
+int uRwellTools::slot_Offset[uRwellTools::nSlot] = {0, 64, 192, 1448, 320, 1576, 1000, 1064, 1192, 448, 1320, 576, 0, 128, 1000, 1128};
 
 uRwellTools::ADC_Distribution uRwellTools::CalcMPVandMean(TH1D* h_in) {
 
@@ -58,7 +82,7 @@ uRwellTools::ADC_Distribution uRwellTools::CalcMPVandMean(TH1D* h_in) {
     distr.errMean = h_in->GetMeanError();
 
     delete f_Landau;
-    
+
     return distr;
 }
 
@@ -184,6 +208,33 @@ void uRwellTools::DrawGroupStripBiundaries() {
 
 namespace uRwellTools {
 
+    uRwellCluster getMaxAdcCluster(std::vector<uRwellCluster> &v_clusters, int MinHits) {
+        int ind_Max = 0;
+        double ADC_Max = 0;
+
+        for (int ind = 0; ind < v_clusters.size(); ind++) {
+
+            if (v_clusters.at(ind).getHits()->size() < MinHits) {
+                continue;
+            }
+
+            if (v_clusters.at(ind).getPeakADC() > ADC_Max) {
+                ADC_Max = v_clusters.at(ind).getPeakADC();
+                ind_Max = ind;
+            }
+        }
+
+        // Check if there is such a cluster, otherwise make a new cluster with 0
+        // energy that easily can be checked 
+        if (ADC_Max > 0) {
+            return v_clusters.at(ind_Max);
+        }else{
+            uRwellCluster tmp;
+            tmp.setEnergy(0);
+            return tmp;
+        }
+    }
+
     uRwellCluster::uRwellCluster() {
         fnStrips = 0;
         fEnergy = 0;
@@ -222,6 +273,9 @@ namespace uRwellTools {
         findAvgStrip();
     }
 
+    uRwellCross::uRwellCross() {
+    }
+
     uRwellCross::uRwellCross(double stripU, double stripV) {
 
         try {
@@ -240,8 +294,8 @@ namespace uRwellTools {
             fCrossX = getCrossX(fStripU, fStripV);
             fCrossY = getCrossY(fStripU, fStripV);
 
-            fSlotU = getSlot(int (fStripU));
-            fSlotV = getSlot(int (1000 + fStripV)); // We add 1000, because the the getSlot( ) function as an argument takes global strip number i, 1 to 1704
+            fSlotU = getURwellSlot(int (fStripU));
+            fSlotV = getURwellSlot(int (1000 + fStripV)); // We add 1000, because the the getURwellSlot( ) function as an argument takes global strip number i, 1 to 1704
 
             fgrU = (std::lower_bound(gr_UBounderies.begin(), gr_UBounderies.end(), fStripU) - gr_UBounderies.begin()) - 1;
             fgrV = (std::lower_bound(gr_VBounderies.begin(), gr_VBounderies.end(), fStripV) - gr_VBounderies.begin()) - 1;

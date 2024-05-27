@@ -371,6 +371,14 @@ int main(int argc, char **argv) {
     c2->Print(Form("Figs/Cross_YXc3_Weighted_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_YXc3_Weighted_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
 
+    TH2D *h_AvgADC_Cross_YXc3 = (TH2D*)h_Cross_YXc_Weighted3->Clone("h_AvgADC_Cross_YXc3");
+    h_AvgADC_Cross_YXc3->Divide(h_Cross_YXc3);
+    h_AvgADC_Cross_YXc3->Draw("colz");
+    h_AvgADC_Cross_YXc3->SetMaximum(h_AvgADC_Cross_YXc3->GetMaximum()/2.);
+    c2->Print(Form("Figs/AvgADC_Cross_YXC3_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c2->Print(Form("Figs/AvgADC_Cross_YXC3_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c2->Print(Form("Figs/AvgADC_Cross_YXC3_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
+    
     Y_bin2 = h_Cross_YXc_Weighted3->GetYaxis()->FindBin(245);
     Y_bin1 = h_Cross_YXc_Weighted3->GetYaxis()->FindBin(-245);
 
