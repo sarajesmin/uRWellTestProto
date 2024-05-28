@@ -162,10 +162,18 @@ int main(int argc, char** argv) {
     TH2D h_ADC_V_U1_[nMaxGroup];
     TH2D h_nV_U1_[nMaxGroup];
 
+    TH2D h_Cross_YXx_Max1_[nMaxGroup];
+    TH2D h_ADC_V_U_Max1_[nMaxGroup];
+    TH2D h_nV_U_Max1_[nMaxGroup];
+
     for (int i = 0; i < nMaxGroup; i++) {
         h_Cross_YXx1_[i] = TH2D(Form("h_Cross_YXx1_%d", i), "", 1000, -900., 900., 200, -500., 500.);
         h_ADC_V_U1_[i] = TH2D(Form("h_ADC_V_U1_%d", i), "", 200, 0., 1500., 200., 0., 1500);
         h_nV_U1_[i] = TH2D(Form("h_nV_U1_%d", i), "", 15, -0.5, 14.5, 15, -0.5, 14.5);
+
+        h_Cross_YXx_Max1_[i] = TH2D(Form("h_Cross_YXx_Max1_%d", i), "", 1000, -900., 900., 200, -500., 500.);
+        h_ADC_V_U_Max1_[i] = TH2D(Form("h_ADC_V_U_Max1_%d", i), "", 200, 0., 1500., 200., 0., 1500);
+        h_nV_U_Max1_[i] = TH2D(Form("h_nV_U_Max1_%d", i), "", 15, -0.5, 14.5, 15, -0.5, 14.5);
     }
 
 
@@ -243,13 +251,13 @@ int main(int argc, char** argv) {
             vector<uRwellCluster> v_Y_GEM_Clusters = uRwellTools::getGlusters(v_Y_GEMHits);
             vector<uRwellCluster> v_X_GEM_Clusters = uRwellTools::getGlusters(v_X_GEMHits);
 
-            uRwellCluster GEM_Max_Y_Cluster = uRwellTools::getMaxAdcCluster( v_Y_GEM_Clusters, 2 );
-            uRwellCluster GEM_Max_X_Cluster = uRwellTools::getMaxAdcCluster( v_X_GEM_Clusters, 2 );
+            uRwellCluster GEM_Max_Y_Cluster = uRwellTools::getMaxAdcCluster(v_Y_GEM_Clusters, 2);
+            uRwellCluster GEM_Max_X_Cluster = uRwellTools::getMaxAdcCluster(v_X_GEM_Clusters, 2);
 
-            if( GEM_Max_Y_Cluster.getHits()->size() > 0 && GEM_Max_X_Cluster.getHits()->size() > 0){
-                h_GEM_cl_YXC_MAX1.Fill(GEM_Max_X_Cluster.getAvgStrip()*GEM_strip2Coord, GEM_Max_Y_Cluster.getAvgStrip()*GEM_strip2Coord );
+            if (GEM_Max_Y_Cluster.getHits()->size() > 0 && GEM_Max_X_Cluster.getHits()->size() > 0) {
+                h_GEM_cl_YXC_MAX1.Fill(GEM_Max_X_Cluster.getAvgStrip() * GEM_strip2Coord, GEM_Max_Y_Cluster.getAvgStrip() * GEM_strip2Coord);
             }
-            
+
             //            for (auto curClust : v_Y_GEM_Clusters) {
             //                cout << "    ******** Cluster ********* " << endl;
             //                cout << "Number of hits      " << curClust.getHits()->size() << endl;
@@ -290,8 +298,8 @@ int main(int argc, char** argv) {
             int n_U_MultiHit_clusters = 0;
             int n_V_MultiHit_clusters = 0;
 
-            uRwellCluster Max_UCluster;
-            uRwellCluster Max_VCluster;
+            uRwellCluster Max_UCluster = uRwellTools::getMaxAdcCluster(v_U_Clusters, MinClSize);
+            uRwellCluster Max_VCluster = uRwellTools::getMaxAdcCluster(v_V_Clusters, MinClSize);
             uRwellCross curCrs_MaxADC;
 
             double U_Cl_ADC_Max = 0;
@@ -303,13 +311,8 @@ int main(int argc, char** argv) {
                 int nhits = v_U_Clusters.at(iUcl).getHits()->size();
                 h_n_UclHits1.Fill(nhits);
 
-                if( nhits < MinClSize ){
+                if (nhits < MinClSize) {
                     continue;
-                }
-                
-                if (v_U_Clusters.at(iUcl).getPeakADC() > U_Cl_ADC_Max) {
-                    U_Cl_ADC_Max = v_U_Clusters.at(iUcl).getPeakADC();
-                    max_Ucl_ind = iUcl;
                 }
 
                 if (nhits >= MinClSize) {
@@ -324,14 +327,9 @@ int main(int argc, char** argv) {
             for (int iVcl = 0; iVcl < v_V_Clusters.size(); iVcl++) {
                 int nhits = v_V_Clusters.at(iVcl).getHits()->size();
                 h_n_VclHits1.Fill(nhits);
-               
-                if( nhits < MinClSize ){
-                    continue;
-                }
 
-                if (v_V_Clusters.at(iVcl).getPeakADC() > V_Cl_ADC_Max) {
-                    V_Cl_ADC_Max = v_V_Clusters.at(iVcl).getPeakADC();
-                    max_Vcl_ind = iVcl;
+                if (nhits < MinClSize) {
+                    continue;
                 }
 
 
@@ -344,14 +342,31 @@ int main(int argc, char** argv) {
                 }
             }
 
-            if (n_U_MultiHit_clusters >= 1 && n_V_MultiHit_clusters >= 1) {
+            if (Max_UCluster.getHits()->size() > 0 && Max_VCluster.getHits()->size() > 0) {
                 // Done looping over U and V clusters, so let's get the U and V cluster with Maximum energies
-                Max_UCluster = v_U_Clusters.at(max_Ucl_ind);
-                Max_VCluster = v_V_Clusters.at(max_Vcl_ind);
+                //Max_UCluster = v_U_Clusters.at(max_Ucl_ind);
+                //Max_VCluster = v_V_Clusters.at(max_Vcl_ind);
                 // This cross represents the cross with Maximum U and Maximum V cluster
                 curCrs_MaxADC = uRwellCross(Max_UCluster.getAvgStrip(), Max_VCluster.getAvgStrip());
                 h_Cross_YXc_Max1.Fill(curCrs_MaxADC.getX(), curCrs_MaxADC.getY());
-                h_Cross_YXc_Max_Weighted1.Fill( curCrs_MaxADC.getX(), curCrs_MaxADC.getY(), Max_UCluster.getPeakADC() + Max_VCluster.getPeakADC() );
+                h_Cross_YXc_Max_Weighted1.Fill(curCrs_MaxADC.getX(), curCrs_MaxADC.getY(), Max_UCluster.getPeakADC() + Max_VCluster.getPeakADC());
+
+                int group_ID = curCrs_MaxADC.getGroupID();
+
+                double crsX = curCrs_MaxADC.getX();
+                double crsY = curCrs_MaxADC.getY();
+
+                //curCrs.PrintCross();
+
+                double cl_ADC_U = Max_UCluster.getPeakADC();
+                double cl_ADC_V = Max_VCluster.getPeakADC();
+
+                if (group_ID >= 0) {
+                    h_Cross_YXx_Max1_[group_ID].Fill(crsX, crsY);
+                    h_ADC_V_U_Max1_[group_ID].Fill(cl_ADC_U, cl_ADC_V);
+                    h_nV_U_Max1_[group_ID].Fill(Max_UCluster.getHits()->size(), Max_VCluster.getHits()->size());
+                }
+
             }
 
             int n_GEMHits_X = 0;
@@ -458,9 +473,9 @@ int main(int argc, char** argv) {
             }
             if (n_GEM_Y_Cl >= 1 && n_GEM_X_Cl >= 1) {
                 h_Cross_YXc_Max2.Fill(curCrs_MaxADC.getX(), curCrs_MaxADC.getY());
-                
-                if( GEM_Max_Y_Cluster.getHits()->size() > 0 && GEM_Max_X_Cluster.getHits()->size() > 0 
-                        && GEM_Max_Y_Cluster.getAvgStrip()*GEM_strip2Coord > 5 ){
+
+                if (GEM_Max_Y_Cluster.getHits()->size() > 0 && GEM_Max_X_Cluster.getHits()->size() > 0
+                        && GEM_Max_Y_Cluster.getAvgStrip() * GEM_strip2Coord > 5) {
                     h_Cross_YXc_Max3.Fill(curCrs_MaxADC.getX(), curCrs_MaxADC.getY());
                 }
             }

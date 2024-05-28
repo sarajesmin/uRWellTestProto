@@ -207,6 +207,7 @@ void uRwellTools::DrawGroupStripBiundaries() {
 }
 
 namespace uRwellTools {
+    
 
     uRwellCluster getMaxAdcCluster(std::vector<uRwellCluster> &v_clusters, int MinHits) {
         int ind_Max = 0;

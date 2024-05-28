@@ -170,7 +170,7 @@ int main(int argc, char **argv) {
     c1->Print(Form("Figs/GEM_MAX_ADC_Y_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
     c1->Print(Form("Figs/GEM_MAX_ADC_Y_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
     c1->Print(Form("Figs/GEM_MAX_ADC_Y_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
-    
+
     TH1D *h_MaxADC_GEM_X1 = (TH1D*) file_in->Get("h_MaxADC_GEM_X1");
     h_MaxADC_GEM_X1->SetLineWidth(2);
     h_MaxADC_GEM_X1->SetTitle("; ADC of GEM X highest hit [ADC]");
@@ -181,7 +181,7 @@ int main(int argc, char **argv) {
     c1->Print(Form("Figs/GEM_MAX_ADC_X_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
     c1->Print(Form("Figs/GEM_MAX_ADC_X_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
     c1->Print(Form("Figs/GEM_MAX_ADC_X_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
-    
+
     TH1D *h_U_Coord_MultrCl1 = (TH1D*) file_in->Get("h_U_Coord_MultrCl1");
     h_U_Coord_MultrCl1->SetTitle("; Cluster U coordinate [strip]");
     h_U_Coord_MultrCl1->SetLineWidth(2);
@@ -371,18 +371,18 @@ int main(int argc, char **argv) {
     c2->Print(Form("Figs/Cross_YXc3_Weighted_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_YXc3_Weighted_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
 
-    TH2D *h_AvgADC_Cross_YXc3 = (TH2D*)h_Cross_YXc_Weighted3->Clone("h_AvgADC_Cross_YXc3");
+    TH2D *h_AvgADC_Cross_YXc3 = (TH2D*) h_Cross_YXc_Weighted3->Clone("h_AvgADC_Cross_YXc3");
     h_AvgADC_Cross_YXc3->Divide(h_Cross_YXc3);
     h_AvgADC_Cross_YXc3->Draw("colz");
-    h_AvgADC_Cross_YXc3->SetMaximum(h_AvgADC_Cross_YXc3->GetMaximum()/2.);
+    h_AvgADC_Cross_YXc3->SetMaximum(h_AvgADC_Cross_YXc3->GetMaximum() / 2.);
     c2->Print(Form("Figs/AvgADC_Cross_YXC3_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
     c2->Print(Form("Figs/AvgADC_Cross_YXC3_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
     c2->Print(Form("Figs/AvgADC_Cross_YXC3_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
-    
+
     Y_bin2 = h_Cross_YXc_Weighted3->GetYaxis()->FindBin(245);
     Y_bin1 = h_Cross_YXc_Weighted3->GetYaxis()->FindBin(-245);
 
-    
+
     TH1D *h_Cross_X_Weighted3 = (TH1D*) h_Cross_YXc_Weighted3->ProjectionX("h_Cross_X_Weighted3", Y_bin1, Y_bin2);
     h_Cross_X_Weighted3->SetLineColor(4);
     h_Cross_X_Weighted3->SetFillColor(4);
@@ -401,6 +401,64 @@ int main(int argc, char **argv) {
     c2->Print(Form("Figs/Cross_X3_Weighted_Unweighted_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_X3_Weighted_Unweighted_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_X3_Weighted_Unweighted_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
+
+    TCanvas *c3 = new TCanvas("c3", "", 1600, 1200);
+    c3->Divide(4, 3, 0., 0.);
+    TCanvas *c4 = new TCanvas("c4", "", 1600, 1200);
+    c4->Divide(4, 3, 0., 0.);
+    TCanvas *c5 = new TCanvas("c5", "", 1600, 1200);
+    c5->Divide(4, 3, 0., 0.);
+
+    // We will fit distributions with a Landau Function
+    f_Landau->SetNpx(4500);
+
+    lat1->SetTextSize(0.08);
+    for (int i = 0; i < uRwellTools::nGroups; i++) {
+
+        TH2D *h_curADC_VU = (TH2D*) file_in->Get(Form("h_ADC_V_U_Max1_%d", i));
+        h_curADC_VU->SetTitle("; ADC_U; ADC_V");
+        c3->cd(i + 1);
+        h_curADC_VU->Draw("colz");
+
+        lat1->DrawLatex(0.15, 0.8, Form("Group %d", i));
+
+        c4->cd(i + 1);
+
+        TH1D *h_curADC_U = (TH1D*) h_curADC_VU->ProjectionX(Form("ADC_U_group_%d", i), 1, h_curADC_VU->GetNbinsY());
+        double peak_X = h_curADC_U->GetBinCenter(h_curADC_U->GetMaximumBin());
+        double init_sigm = peak_X / 5.; // trying to put an empiric relation
+        double p0 = h_curADC_U->GetMaximum() * peak_X / init_sigm;
+        f_Landau->SetParameters(p0, peak_X, init_sigm);
+        h_curADC_U->Fit(f_Landau, "MeV", "", 0., 600);
+        lat1->DrawLatex(0.25, 0.8, Form("Group %d", i));
+        lat1->DrawLatex(0.25, 0.7, Form("MPV = %1.1f", f_Landau->GetParameter(1)));
+        lat1->DrawLatex(0.25, 0.6, Form("Width U = %1.0f #mum", uRwellTools::m_UStripWidth.at(i)));
+        lat1->DrawLatex(0.25, 0.5, Form("Width V = %1.0f #mum", uRwellTools::m_VStripWidth.at(i)));
+
+        c5->cd(i + 1);
+
+        TH1D *h_curADC_V = (TH1D*) h_curADC_VU->ProjectionY(Form("ADC_V_group_%d", i), 1, h_curADC_VU->GetNbinsX());
+        peak_X = h_curADC_V->GetBinCenter(h_curADC_V->GetMaximumBin());
+        init_sigm = peak_X / 5.; // trying to put an empiric relation
+        p0 = h_curADC_V->GetMaximum() * peak_X / init_sigm;
+        f_Landau->SetParameters(p0, peak_X, init_sigm);
+        h_curADC_V->Fit(f_Landau, "MeV", "", 0., 600);
+        lat1->DrawLatex(0.3, 0.8, Form("Group %d", i));
+        lat1->DrawLatex(0.25, 0.7, Form("MPV = %1.1f", f_Landau->GetParameter(1)));
+        lat1->DrawLatex(0.25, 0.6, Form("Width U = %1.0f #mum", uRwellTools::m_UStripWidth.at(i)));
+        lat1->DrawLatex(0.25, 0.5, Form("Width V = %1.0f #mum", uRwellTools::m_VStripWidth.at(i)));
+    }
+    c3->Print(Form("Figs/ADC_VU_Max_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c3->Print(Form("Figs/ADC_VU_Max_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c3->Print(Form("Figs/ADC_VU_Max_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
+
+    c4->Print(Form("Figs/ADC_U_Max_Fit_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c4->Print(Form("Figs/ADC_U_Max_Fit_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c4->Print(Form("Figs/ADC_U_Max_Fit_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
+
+    c5->Print(Form("Figs/ADC_V_Max_Fit_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c5->Print(Form("Figs/ADC_V_Max_Fit_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c5->Print(Form("Figs/ADC_V_Max_Fit_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
 
     return 0;
 }

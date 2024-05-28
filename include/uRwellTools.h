@@ -15,6 +15,14 @@
 
 namespace uRwellTools {
 
+    // There are 11 distinct geometric regions with different U over V width ratios.
+    const int nGroups = 11;
+
+    const std::map<int, double> m_UStripWidth { {0, 350}, {1, 262}, {2, 262}, {3, 262}, {4, 262}, {5, 350}, {6, 350}, {7, 350},
+     {8, 175}, {9, 175}, {10, 175} };
+    const std::map<int, double> m_VStripWidth { {0, 500}, {1, 650}, {2, 500}, {3, 650}, {4, 355}, {5, 500}, {6, 650}, {7, 355},
+     {8, 500}, {9, 650}, {10, 355} };
+
     // ======= Boundaries of groups of strips with the given strip width =======
     const std::vector<double> gr_UBounderies = {0.5, 64.5, 320.5, 448.5, 704.5};
     const std::vector<double> gr_VBounderies = {0.5, 64.5, 320.5, 448.5, 704.5};
@@ -68,13 +76,13 @@ namespace uRwellTools {
     /*
      * This object contains some summary information about the ADC distribution that is fitted with a Landau function.
      */
-    struct ADC_Distribution{
+    struct ADC_Distribution {
         double MPV;
         double errMPV;
         double Mean;
         double errMean;
     };
-    
+
     const double OneSigma = 0.683;
 
     const int clStripGap = 2; // The Max length of the gap in between strips with a given cluster 
@@ -106,7 +114,7 @@ namespace uRwellTools {
     const double uRWell_Y_min = -250.; // mm
     const double uRwell_XTop = 728.;
     const double uRwell_XBot = 510.;
-    
+
     /*
      * This function takes the h_in histogram, which is intended to be the ADC distributions that supposed to look
      * like a Landau distribution.
@@ -148,7 +156,6 @@ namespace uRwellTools {
 
     void DrawGroupStripBiundaries();
 
-    
     class uRwellCluster {
     public:
         uRwellCluster();
@@ -203,35 +210,37 @@ namespace uRwellTools {
         const double getStripV() {
             return fStripV;
         }
-        
-        const double getX(){
+
+        const double getX() {
             return fCrossX;
         }
-        const double getY(){
+
+        const double getY() {
             return fCrossY;
         }
 
-        const int getGroupU(){
+        const int getGroupU() {
             return fgrU;
         }
 
-        const int getGroupV(){
+        const int getGroupV() {
             return fgrV;
         }
-        
-        const int getGroupID(){
+
+        const int getGroupID() {
             return fGroupID;
         }
-        
-        const int getSlotU(){
+
+        const int getSlotU() {
             return fSlotU;
         }
-        const int getSlotV(){
+
+        const int getSlotV() {
             return fSlotV;
         }
-        
+
         const void PrintCross();
-        
+
     private:
         double fStripU; // Cross U coordinated, in units of strip
         double fStripV; // Cross V coordinated, in units of strip
@@ -250,7 +259,7 @@ namespace uRwellTools {
     double getCrossX(double strip_U, double strip_V); // returns Cross UxV cross X coordinate
     double getCrossY(double strip_U, double strip_V); // returns Cross UxV cross Y coordinate
     uRwellCluster getMaxAdcCluster(std::vector<uRwellCluster> &, int);
-    
+
 }
 
 #endif /* URWELLTOOLS_H */
