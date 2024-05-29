@@ -402,6 +402,39 @@ int main(int argc, char **argv) {
     c2->Print(Form("Figs/Cross_X3_Weighted_Unweighted_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_X3_Weighted_Unweighted_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
 
+    
+    TH2D *h_Cross_YXc_Max1 = (TH2D*) file_in->Get("h_Cross_YXc_Max1");
+    h_Cross_YXc_Max1->SetStats(0);
+    h_Cross_YXc_Max1->SetTitle("; Cross X coordinate [mm]; Cross Y coordinate [mm]");
+    h_Cross_YXc_Max1->SetTitleSize(0.05, "Y");
+    h_Cross_YXc_Max1->SetLabelSize(0.05, "Y");
+    h_Cross_YXc_Max1->SetTitleOffset(0.9, "Y");
+    h_Cross_YXc_Max1->SetTitleSize(0.05, "X");
+    h_Cross_YXc_Max1->SetLabelSize(0.05, "X");
+    h_Cross_YXc_Max1->SetMaximum(h_Cross_YXc1->GetMaximum() / 5.);
+    h_Cross_YXc_Max1->SetMinimum(1.5);
+    h_Cross_YXc_Max1->Draw("col");
+    DrawActiveArea();
+    uRwellTools::DrawGroupStripBiundaries();
+    c2->Print(Form("Figs/Cross_YXc_Max1_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c2->Print(Form("Figs/Cross_YXc_Max1_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c2->Print(Form("Figs/Cross_YXc_Max1_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
+
+    TH2D *h_Cross_YXc_Max2 = (TH2D*) file_in->Get("h_Cross_YXc_Max2");
+    h_Cross_YXc_Max2->SetStats(0);
+    h_Cross_YXc_Max2->SetTitle("; Cross X coordinate [mm]; Cross Y coordinate [mm]");
+    h_Cross_YXc_Max2->SetTitleSize(0.05, "Y");
+    h_Cross_YXc_Max2->SetLabelSize(0.05, "Y");
+    h_Cross_YXc_Max2->SetTitleOffset(0.9, "Y");
+    h_Cross_YXc_Max2->SetTitleSize(0.05, "X");
+    h_Cross_YXc_Max2->SetLabelSize(0.05, "X");
+    h_Cross_YXc_Max2->Draw("col");
+    DrawActiveArea();
+    c2->Print(Form("Figs/Cross_YXc_Max2_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c2->Print(Form("Figs/Cross_YXc_Max2_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c2->Print(Form("Figs/Cross_YXc_Max2_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
+    
+    
     TCanvas *c3 = new TCanvas("c3", "", 1600, 1200);
     c3->Divide(4, 3, 0., 0.);
     TCanvas *c4 = new TCanvas("c4", "", 1600, 1200);
