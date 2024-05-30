@@ -77,8 +77,10 @@ int main(int argc, char** argv) {
     hipo::event event;
     int evCounter = 0;
 
+    const double GEM_LargeSignal_Thr = 8.;
     const int nMaxGroup = 11;
     const int n_ts = 9;
+    const int n_MaxClusters = 5; // If the number of clusters is more than this number, then the entire event will be dropped
 
     const int layer_U_uRwell = 1;
     const int layer_V_uRwell = 2;
@@ -126,9 +128,26 @@ int main(int argc, char** argv) {
     TH2D h_Cross_YXc_Max1("h_Cross_YXc_Max1", "", 1000, -900., 900., 200, -500., 500.);
     TH2D h_Cross_YXc_Max2("h_Cross_YXc_Max2", "", 1000, -900., 900., 200, -500., 500.);
     TH2D h_Cross_YXc_Max3("h_Cross_YXc_Max3", "", 1000, -900., 900., 200, -500., 500.);
+    TH2D h_Cross_YXc_Max4("h_Cross_YXc_Max4", "", 1000, -900., 900., 200, -500., 500.);
 
     TH2D h_Cross_YXc_Max_Weighted1("h_Cross_YXc_Max_Weighted1", "", 1000, -900., 900., 200, -500., 500.);
+    TH2D h_Cross_YXc_Max_Weighted_ADC_U1("h_Cross_YXc_Max_Weighted_ADC_U1", "", 1000, -900., 900., 200, -500., 500.);
+    TH2D h_Cross_YXc_Max_Weighted_ADC_V1("h_Cross_YXc_Max_Weighted_ADC_V1", "", 1000, -900., 900., 200, -500., 500.);
     TH2D h_Cross_YXc_Max_Weighted_tU1("h_Cross_YXc_Max_Weighted_tU1", "", 1000, -900., 900., 200, -500., 500.);
+    TH2D h_Cross_YXc_Max_Weighted_tV1("h_Cross_YXc_Max_Weighted_tV1", "", 1000, -900., 900., 200, -500., 500.);
+    TH2D h_Cross_YXc_Max_Weighted_clUSize1("h_Cross_YXc_Max_Weighted_clUSize1", "", 1000, -900., 900., 200, -500., 500.);
+    TH2D h_Cross_YXc_Max_Weighted_clVSize1("h_Cross_YXc_Max_Weighted_clVSize1", "", 1000, -900., 900., 200, -500., 500.);
+
+    /* 
+     * Noise related histograms
+     */
+    
+    TH2D h_clV_clU_size_NOISE_1("h_clV_clU_size_NOISE_1", "", 15, -0.5, 14.5, 15, -0.5, 14.5);
+    TH2D h_clV_clU_time_NOISE_1("h_clV_clU_time_NOISE_1", "", n_ts + 1, -0.5, double(n_ts) + 0.5, n_ts + 1, -0.5, double(n_ts) + 0.5 );
+    TH2D h_clV_clU_ADC_NOISE_1("h_clV_clU_ADC_NOISE_1", "", 200, 0., 1600, 200, 0., 1600 );
+    TH2D h_N_Cl_V_U_NOISE_1("h_N_Cl_V_U_NOISE_1", "", 25, -0.5, 24.5, 25, -0.5, 24.5 );
+    
+    TH2D h_clV_clU_size1("h_clV_clU_size1", "", 15, -0.5, 14.5, 15, -0.5, 14.5);
 
     TH2D h_time_ADC_U_Max1("h_time_ADC_U_Max1", "", 200, 0., 1500., n_ts + 1, -0.5, double(n_ts) + 0.5);
     TH2D h_time_ADC_V_Max1("h_time_ADC_V_Max1", "", 200, 0., 1500., n_ts + 1, -0.5, double(n_ts) + 0.5);
@@ -221,7 +240,7 @@ int main(int argc, char** argv) {
 
                 } else if (curHit.sector == sec_GEM) {
 
-                    if (curHit.adcRel < 5) {
+                    if (curHit.adcRel < GEM_LargeSignal_Thr) {
                         continue;
                     }
 
@@ -274,6 +293,8 @@ int main(int argc, char** argv) {
             int n_V_cl = v_V_Clusters.size();
             h_n_V_vs_U_Clusters1.Fill(n_U_cl, n_V_cl);
 
+
+
             int n_U_MultiHit_clusters = 0;
             int n_V_MultiHit_clusters = 0;
 
@@ -325,26 +346,53 @@ int main(int argc, char** argv) {
                 // This cross represents the cross with Maximum U and Maximum V cluster
                 curCrs_MaxADC = uRwellCross(Max_UCluster.getAvgStrip(), Max_VCluster.getAvgStrip());
                 h_Cross_YXc_Max1.Fill(curCrs_MaxADC.getX(), curCrs_MaxADC.getY());
-                h_Cross_YXc_Max_Weighted1.Fill(curCrs_MaxADC.getX(), curCrs_MaxADC.getY(), Max_UCluster.getPeakADC() + Max_VCluster.getPeakADC());
 
+                if (n_U_cl > n_MaxClusters || n_V_cl > n_MaxClusters) {
+                    h_Cross_YXc_Max4.Fill(curCrs_MaxADC.getX(), curCrs_MaxADC.getY());
+                }
+
+                
                 
                 int time_Max_U = Max_UCluster.getPeakTime();
                 int time_Max_V = Max_VCluster.getPeakTime();
                 h_t_V_vs_U_Max1.Fill(time_Max_U, time_Max_V);
-                                
+
+                int size_clU_U = Max_UCluster.getHits()->size();
+                int size_clU_V = Max_VCluster.getHits()->size();
+
                 double cl_ADC_U = Max_UCluster.getPeakADC();
                 double cl_ADC_V = Max_VCluster.getPeakADC();
                 h_time_ADC_U_Max1.Fill(cl_ADC_U, time_Max_U);
                 h_time_ADC_V_Max1.Fill(cl_ADC_V, time_Max_V);
+
                 
                 int group_ID = curCrs_MaxADC.getGroupID();
 
                 double crsX = curCrs_MaxADC.getX();
                 double crsY = curCrs_MaxADC.getY();
-                
-                h_Cross_YXc_Max_Weighted_tU1.Fill( crsX, crsY, time_Max_U );
 
-                //curCrs.PrintCross();
+                /* 
+                 * Some rough geometric cut that selects right side crosses that
+                 * are apparently out of the detector active area. Just want to check
+                 * whether those events have something unique e.g.
+                 */
+                if( crsY < -1400. + 2.2*crsX ){
+                    h_clV_clU_size_NOISE_1.Fill(size_clU_U, size_clU_V);
+                    h_clV_clU_time_NOISE_1.Fill(time_Max_U, time_Max_V);
+                    
+                    h_clV_clU_ADC_NOISE_1.Fill(cl_ADC_U, cl_ADC_V);
+                    h_N_Cl_V_U_NOISE_1.Fill(n_U_cl, n_V_cl);
+
+                }
+                                
+                h_Cross_YXc_Max_Weighted1.Fill(crsX, crsY, cl_ADC_U + cl_ADC_V);
+                h_Cross_YXc_Max_Weighted_ADC_U1.Fill(crsX, crsY, cl_ADC_U);
+                h_Cross_YXc_Max_Weighted_ADC_V1.Fill(crsX, crsY, cl_ADC_V);
+                h_Cross_YXc_Max_Weighted_tU1.Fill(crsX, crsY, time_Max_U);
+                h_Cross_YXc_Max_Weighted_tV1.Fill(crsX, crsY, time_Max_V);
+                h_Cross_YXc_Max_Weighted_clUSize1.Fill(crsX, crsY, size_clU_U);
+                h_Cross_YXc_Max_Weighted_clVSize1.Fill(crsX, crsY, size_clU_V);
+                h_clV_clU_size1.Fill(size_clU_U, size_clU_V);
 
 
                 if (group_ID >= 0) {
