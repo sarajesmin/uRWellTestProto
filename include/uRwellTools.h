@@ -18,10 +18,30 @@ namespace uRwellTools {
     // There are 11 distinct geometric regions with different U over V width ratios.
     const int nGroups = 11;
 
-    const std::map<int, double> m_UStripWidth { {0, 350}, {1, 262}, {2, 262}, {3, 262}, {4, 262}, {5, 350}, {6, 350}, {7, 350},
-     {8, 175}, {9, 175}, {10, 175} };
-    const std::map<int, double> m_VStripWidth { {0, 500}, {1, 650}, {2, 500}, {3, 650}, {4, 355}, {5, 500}, {6, 650}, {7, 355},
-     {8, 500}, {9, 650}, {10, 355} };
+    const std::map<int, double> m_UStripWidth{
+        {0, 350},
+        {1, 262},
+        {2, 262},
+        {3, 262},
+        {4, 262},
+        {5, 350},
+        {6, 350},
+        {7, 350},
+        {8, 175},
+        {9, 175},
+        {10, 175}};
+    const std::map<int, double> m_VStripWidth{
+        {0, 500},
+        {1, 650},
+        {2, 500},
+        {3, 650},
+        {4, 355},
+        {5, 500},
+        {6, 650},
+        {7, 355},
+        {8, 500},
+        {9, 650},
+        {10, 355}};
 
     // ======= Boundaries of groups of strips with the given strip width =======
     const std::vector<double> gr_UBounderies = {0.5, 64.5, 320.5, 448.5, 704.5};
@@ -182,6 +202,10 @@ namespace uRwellTools {
             return fAvgStrip;
         }
 
+        const double getPeakTime() {
+            return fPeakTime;
+        }
+
         // This method will be called when all hits of the cluster are identifed, and set into the cluster
         // I till find the Peak energy, the weighted avg strip etc.
         void FinalizeCluster();
@@ -191,8 +215,10 @@ namespace uRwellTools {
         double fEnergy;
         double fPeakADC;
         double fAvgStrip;
+        double fPeakTime; // This is the peak time of the highest ADC strip
         std::vector<uRwellHit> fv_Hits;
 
+        void findPeakTime();
         void findPeakEnergy();
         void findAvgStrip();
 

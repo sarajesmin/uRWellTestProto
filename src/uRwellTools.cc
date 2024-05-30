@@ -269,9 +269,23 @@ namespace uRwellTools {
         fAvgStrip = WeightedSum / ADCSum;
     }
 
+    void uRwellCluster::findPeakTime() {
+
+        int time = -1;
+        
+        double MaxADC = 0;
+        
+        for (auto curHit : fv_Hits) {
+            time = MaxADC > curHit.adc ? time : curHit.ts;
+        }
+        fPeakTime = time;
+    }
+    
+    
     void uRwellCluster::FinalizeCluster() {
         findPeakEnergy();
         findAvgStrip();
+        findPeakTime();
     }
 
     uRwellCross::uRwellCross() {
@@ -345,6 +359,11 @@ namespace uRwellTools {
             double curHitEnergy = v_Hits.at(i).adc;
 
             //cout << "v_Hits.at(i).strip = " << v_Hits.at(i).strip << "    curStrip =  " << curStrip << endl;
+                        
+            /*
+             * Since the v_Hits is sorted by Strip numbers, in the following if statement we 
+             * don't need to chack fro absalute value for the curStrip - prev_Strip
+             */
             if ((curStrip - prev_Strip <= (clStripGap + 1)) || i == 0) {
                 clEnergy = clEnergy + curHitEnergy;
                 v_ClHits.push_back(v_Hits.at(i));
