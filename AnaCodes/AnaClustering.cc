@@ -23,20 +23,6 @@
 using namespace std;
 using namespace uRwellTools;
 
-//struct uRwellHit {
-//    int sector;
-//    int layer;
-//    int strip;
-//    double adc;
-//    double adcRel;
-//    int ts;
-//    int slot;
-//};
-
-/*
- * 
- */
-
 int main(int argc, char** argv) {
 
     char outputFile[256];
@@ -265,20 +251,6 @@ int main(int argc, char** argv) {
                 h_GEM_cl_YXC_MAX1.Fill(GEM_Max_X_Cluster.getAvgStrip() * GEM_strip2Coord, GEM_Max_Y_Cluster.getAvgStrip() * GEM_strip2Coord);
             }
 
-            //            for (auto curClust : v_Y_GEM_Clusters) {
-            //                cout << "    ******** Cluster ********* " << endl;
-            //                cout << "Number of hits      " << curClust.getHits()->size() << endl;
-            //                cout << "The AvgStrip is     " << curClust.getAvgStrip() << endl;
-            //                cout << "The PeakADC is      " << curClust.getPeakADC() << endl;
-            //
-            //                vector<uRwellHit> *curHits = curClust.getHits();
-            //
-            //                for (auto curHit : *curHits) {
-            //                    cout << "               **** Hit ***** " << endl;
-            //                    cout << "         ADC is            " << curHit.adc << endl;
-            //                    cout << "         Strip is          " << curHit.strip << endl;
-            //                }
-            //            }
 
             for (auto curHit : v_U_Hits_uRwell) {
 
@@ -350,9 +322,6 @@ int main(int argc, char** argv) {
             }
 
             if (Max_UCluster.getHits()->size() > 0 && Max_VCluster.getHits()->size() > 0) {
-                // Done looping over U and V clusters, so let's get the U and V cluster with Maximum energies
-                //Max_UCluster = v_U_Clusters.at(max_Ucl_ind);
-                //Max_VCluster = v_V_Clusters.at(max_Vcl_ind);
                 // This cross represents the cross with Maximum U and Maximum V cluster
                 curCrs_MaxADC = uRwellCross(Max_UCluster.getAvgStrip(), Max_VCluster.getAvgStrip());
                 h_Cross_YXc_Max1.Fill(curCrs_MaxADC.getX(), curCrs_MaxADC.getY());
