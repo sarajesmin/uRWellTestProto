@@ -92,6 +92,7 @@ int main(int argc, char** argv) {
     int evCounter = 0;
 
     const int nMaxGroup = 11;
+    const int n_ts = 9;
 
     const int layer_U_uRwell = 1;
     const int layer_V_uRwell = 2;
@@ -141,6 +142,11 @@ int main(int argc, char** argv) {
     TH2D h_Cross_YXc_Max3("h_Cross_YXc_Max3", "", 1000, -900., 900., 200, -500., 500.);
 
     TH2D h_Cross_YXc_Max_Weighted1("h_Cross_YXc_Max_Weighted1", "", 1000, -900., 900., 200, -500., 500.);
+    TH2D h_Cross_YXc_Max_Weighted_tU1("h_Cross_YXc_Max_Weighted_tU1", "", 1000, -900., 900., 200, -500., 500.);
+
+    TH2D h_time_ADC_U_Max1("h_time_ADC_U_Max1", "", 200, 0., 1500., n_ts + 1, -0.5, double(n_ts) + 0.5);
+    TH2D h_time_ADC_V_Max1("h_time_ADC_V_Max1", "", 200, 0., 1500., n_ts + 1, -0.5, double(n_ts) + 0.5);
+    TH2D h_t_V_vs_U_Max1("h_t_V_vs_U_Max1", "", n_ts + 1, -0.5, double(n_ts) + 0.5, n_ts + 1, -0.5, double(n_ts) + 0.5);
 
     TH2D h_Cross_YXc_Weighted1("h_Cross_YXc_Weighted1", "", 1000, -900., 900., 200, -500., 500.);
     TH2D h_Cross_YXc_Weighted2("h_Cross_YXc_Weighted2", "", 1000, -900., 900., 200, -500., 500.);
@@ -211,6 +217,7 @@ int main(int argc, char** argv) {
                 curHit.adc = double(buRwellHit.getFloat("adc", ihit));
                 curHit.adcRel = double(buRwellHit.getFloat("adcRel", ihit));
                 curHit.slot = buRwellHit.getInt("slot", ihit);
+                curHit.ts = buRwellHit.getInt("ts", ihit);
 
                 if (curHit.sector == sec_uRwell) {
 
@@ -351,15 +358,25 @@ int main(int argc, char** argv) {
                 h_Cross_YXc_Max1.Fill(curCrs_MaxADC.getX(), curCrs_MaxADC.getY());
                 h_Cross_YXc_Max_Weighted1.Fill(curCrs_MaxADC.getX(), curCrs_MaxADC.getY(), Max_UCluster.getPeakADC() + Max_VCluster.getPeakADC());
 
+                
+                int time_Max_U = Max_UCluster.getPeakTime();
+                int time_Max_V = Max_VCluster.getPeakTime();
+                h_t_V_vs_U_Max1.Fill(time_Max_U, time_Max_V);
+                                
+                double cl_ADC_U = Max_UCluster.getPeakADC();
+                double cl_ADC_V = Max_VCluster.getPeakADC();
+                h_time_ADC_U_Max1.Fill(cl_ADC_U, time_Max_U);
+                h_time_ADC_V_Max1.Fill(cl_ADC_V, time_Max_V);
+                
                 int group_ID = curCrs_MaxADC.getGroupID();
 
                 double crsX = curCrs_MaxADC.getX();
                 double crsY = curCrs_MaxADC.getY();
+                
+                h_Cross_YXc_Max_Weighted_tU1.Fill( crsX, crsY, time_Max_U );
 
                 //curCrs.PrintCross();
 
-                double cl_ADC_U = Max_UCluster.getPeakADC();
-                double cl_ADC_V = Max_VCluster.getPeakADC();
 
                 if (group_ID >= 0) {
                     h_Cross_YXx_Max1_[group_ID].Fill(crsX, crsY);

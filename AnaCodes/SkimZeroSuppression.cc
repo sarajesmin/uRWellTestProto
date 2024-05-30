@@ -195,8 +195,12 @@ int main(int argc, char** argv) {
             double ADC_GEM_[nGEMChannels] = {0};
             double ADCRel_GEM_[nGEMChannels] = {0};
 
+            std::map<int, int> m_ts_uRWELL; // This represents the time sample that has the highest ADC for the given strip
+            std::map<int, double> m_MaxADC_uRWELL; // This represents the maximum ADC from all time samples of the given strip
             std::map<int, double> m_ADC_uRWELL;
             std::map<int, double> m_ADCRel_uRWELL;
+            std::map<int, int> m_ts_GEM; // This represents the time sample that has the highest ADC for the given strip
+            std::map<int, double> m_MaxADC_GEM; // This represents the maximum ADC from all time samples of the given strip
             std::map<int, double> m_ADC_GEM;
             std::map<int, double> m_ADCRel_GEM;
 
@@ -221,30 +225,44 @@ int main(int argc, char** argv) {
                     //}
 
                     m_ADC_GEM[uniqueChan] += double(ADC);
+
+                    if ( m_ped_GEM_mean[uniqueChan] - ADC > m_MaxADC_GEM[uniqueChan]) {
+                        m_MaxADC_GEM[uniqueChan] = m_ped_GEM_mean[uniqueChan] - ADC;
+                        m_ts_GEM[uniqueChan] = ts;
+                    }
+
+
                 } else if (sector == sec_uRWell) {
                     m_ADC_uRWELL[uniqueChan] = m_ADC_uRWELL[uniqueChan] + double(ADC);
+
+                    //cout<<uniqueChan<<"   "<<ts<<"   "<<m_ped_mean[uniqueChan] - ADC<<"---";
+                    
+                    if ( m_ped_mean[uniqueChan] - ADC > m_MaxADC_uRWELL[uniqueChan]) {
+                        m_MaxADC_uRWELL[uniqueChan] = m_ped_mean[uniqueChan] - ADC;
+                        m_ts_uRWELL[uniqueChan] = ts;
+                    }
                 }
 
             }
-
-//
-//            for (int ich = 0; ich < nGEMChannels; ich++) {
-//                ADC_GEM_[ich] = m_ped_GEM_mean[ich + 1] - ADC_GEM_[ich] / double(n_ts);
-//                ADCRel_GEM_[ich] = ADC_GEM_[ich] / m_ped_GEM_rms[ich + 1];
-//
-//                if (ADCRel_GEM_[ich] > sigm_threshold) {
-//                    uRwellHit curHit;
-//                    curHit.adc = ADC_GEM_[ich];
-//                    curHit.adcRel = ADCRel_GEM_[ich];
-//                    curHit.sector = sec_GEM;
-//                    curHit.layer = 0;
-//                    curHit.slot = 12 + ich / 128;
-//                    curHit.strip = ich;
-//                    curHit.stripLocal = ich % 128; // For GEM this doesn't have a good meaning without knowing the strip to connector internal mapping
-//                    curHit.ts = 0; // For now we will not prserve the hit time information
-//                    v_GEM_Hits.push_back(curHit);
-//                }
-//            }
+            
+            //
+            //            for (int ich = 0; ich < nGEMChannels; ich++) {
+            //                ADC_GEM_[ich] = m_ped_GEM_mean[ich + 1] - ADC_GEM_[ich] / double(n_ts);
+            //                ADCRel_GEM_[ich] = ADC_GEM_[ich] / m_ped_GEM_rms[ich + 1];
+            //
+            //                if (ADCRel_GEM_[ich] > sigm_threshold) {
+            //                    uRwellHit curHit;
+            //                    curHit.adc = ADC_GEM_[ich];
+            //                    curHit.adcRel = ADCRel_GEM_[ich];
+            //                    curHit.sector = sec_GEM;
+            //                    curHit.layer = 0;
+            //                    curHit.slot = 12 + ich / 128;
+            //                    curHit.strip = ich;
+            //                    curHit.stripLocal = ich % 128; // For GEM this doesn't have a good meaning without knowing the strip to connector internal mapping
+            //                    curHit.ts = 0; // For now we will not prserve the hit time information
+            //                    v_GEM_Hits.push_back(curHit);
+            //                }
+            //            }
 
             vector<uRwellHit> v_GEM_Hits;
             for (auto it = m_ADC_GEM.begin(); it != m_ADC_GEM.end(); ++it) {
@@ -258,11 +276,11 @@ int main(int argc, char** argv) {
                     curHit.adc = m_ADC_GEM[ch];
                     curHit.adcRel = m_ADCRel_GEM[ch];
                     curHit.sector = sec_GEM;
-                    curHit.layer = 1 + ch/1000;
+                    curHit.layer = 1 + ch / 1000;
                     curHit.slot = uRwellTools::getGEMSlot(ch);
                     curHit.strip = ch % 1000;
                     curHit.stripLocal = ch - uRwellTools::slot_Offset[curHit.slot];
-                    curHit.ts = 0;
+                    curHit.ts = m_ts_GEM[ch];
                     v_GEM_Hits.push_back(curHit);
                 }
             }
@@ -282,10 +300,12 @@ int main(int argc, char** argv) {
                     curHit.slot = uRwellTools::getURwellSlot(ch);
                     curHit.strip = ch % 1000;
                     curHit.stripLocal = ch - uRwellTools::slot_Offset[curHit.slot];
-                    curHit.ts = 0;
+                    curHit.ts = m_ts_uRWELL[ch];
                     v_uRwell_Hits.push_back(curHit);
+                    //cout<<"*****"<<"ch "<<ch<<"   ADC = "<<m_ADC_uRWELL[ch]<<"    ts = "<<m_ts_uRWELL[ch]<<endl;
                 }
             }
+            //cout<<"            ************ GOING TO NEXT EVENT **************            "<<endl;
 
             int n_TotHits = v_GEM_Hits.size() + v_uRwell_Hits.size();
 
