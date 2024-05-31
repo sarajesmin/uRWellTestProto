@@ -93,6 +93,7 @@ int main(int argc, char **argv) {
     mv_runs[16] = {19860, 19861, 19862, 19863, 19864, 19865, 19866, 19867, 19868, 19869, 198610, 198611, 198612, 198613, 198614, 198615, 198616, 198617, 198618, 198619,
                   198620, 198621, 198622, 198623, 198624, 198625, 198626};
     mv_runs[18] = {2091, 2090, 2089, 2085, 2087};
+    mv_runs[19] = {2092, 2095, 2096, 2099};
     std::map<int, double> m_MESH_HV; // The key is the run number, the value is the MESH_HV
     std::map<int, double> m_Cathode_HV; // The key is the run number, the value is the Cathode_HV
     std::map<int, double> m_Drift_HV; // The key is the run number, the value is the Drift_HV = Hathode_HV - MESH_HV
@@ -115,6 +116,7 @@ int main(int argc, char **argv) {
     m_HVType[15] = "FILE_IND";
     m_HVType[16] = "FILE_IND";
     m_HVType[18] = "MESH";
+    m_HVType[19] = "DRIFT";
 
     std::map<int, std::string> m_XTitle;
 
@@ -133,6 +135,7 @@ int main(int argc, char **argv) {
     m_XTitle[14] = "File number";
     m_XTitle[16] = "File number";
     m_XTitle[18] = "MESH HV [V]";
+    m_XTitle[19] = "DRIFT HV [V]";
     
     TCanvas *c1 = new TCanvas("c1", "", 950, 950);
     c1->SetTopMargin(0.02);
