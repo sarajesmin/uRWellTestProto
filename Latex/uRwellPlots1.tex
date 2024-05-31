@@ -9,20 +9,21 @@
 \textheight = 26.5cm
 
 \def \RUN{2099}
-\def \THR{4$\sigma$}
+\def \THR{4.0}
 \def \MinHits{1}
 \def \grinp{\includegraphics}
 \def \tw{\textwidth}
 
-\title{ Analysis plots for the run {\color{blue}\RUN}: Hit threshold is {\color{blue}\THR} and minimum number of hits in the cluster is {\color{blue}\MinHits} }
+\title{ Analysis plots for the run {\color{blue}\RUN}: Hit threshold is {\color{blue}\THR$\;\sigma$} and minimum number of hits in the cluster is {\color{blue}\MinHits} }
 
 \begin{document}
 \maketitle
 
  \begin{figure}[!htb]
   \centering
-   \grinp[width=0.95\tw]{Figs/Cross_YXc_Max1_Weighted_Energy_V_2099_t4.0_m1.pdf}
-   \label{fig:aa}
+   \grinp[width=0.95\tw]{Figs/Cross_YXc_Max1_\RUN_t\THR_m\MinHits.pdf}
+   \caption{Cross $Y$ vs $X$ distribution. Events are not weighted.}
+   \label{fig:crs_YXC1}
 
  \end{figure}
 
