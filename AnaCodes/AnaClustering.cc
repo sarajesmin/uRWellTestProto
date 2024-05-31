@@ -138,20 +138,25 @@ int main(int argc, char** argv) {
     TH2D h_Cross_YXc_Max_Weighted_clUSize1("h_Cross_YXc_Max_Weighted_clUSize1", "", 1000, -900., 900., 200, -500., 500.);
     TH2D h_Cross_YXc_Max_Weighted_clVSize1("h_Cross_YXc_Max_Weighted_clVSize1", "", 1000, -900., 900., 200, -500., 500.);
 
+    TH2D h_Cross_YXc_Max_Weighted_TotEnergy1("h_Cross_YXc_Max_Weighted_TotEnergy1", "", 1000, -900., 900., 200, -500., 500.);
+    TH2D h_Cross_YXc_Max_Weighted_Energy_U1("h_Cross_YXc_Max_Weighted_Energy_U1", "", 1000, -900., 900., 200, -500., 500.);
+    TH2D h_Cross_YXc_Max_Weighted_Energy_V1("h_Cross_YXc_Max_Weighted_Energy_V1", "", 1000, -900., 900., 200, -500., 500.);
     /* 
      * Noise related histograms
      */
-    
+
     TH2D h_clV_clU_size_NOISE_1("h_clV_clU_size_NOISE_1", "", 15, -0.5, 14.5, 15, -0.5, 14.5);
-    TH2D h_clV_clU_time_NOISE_1("h_clV_clU_time_NOISE_1", "", n_ts + 1, -0.5, double(n_ts) + 0.5, n_ts + 1, -0.5, double(n_ts) + 0.5 );
-    TH2D h_clV_clU_ADC_NOISE_1("h_clV_clU_ADC_NOISE_1", "", 200, 0., 1600, 200, 0., 1600 );
-    TH2D h_N_Cl_V_U_NOISE_1("h_N_Cl_V_U_NOISE_1", "", 25, -0.5, 24.5, 25, -0.5, 24.5 );
-    
+    TH2D h_clV_clU_time_NOISE_1("h_clV_clU_time_NOISE_1", "", n_ts + 1, -0.5, double(n_ts) + 0.5, n_ts + 1, -0.5, double(n_ts) + 0.5);
+    TH2D h_clV_clU_ADC_NOISE_1("h_clV_clU_ADC_NOISE_1", "", 200, 0., 1600, 200, 0., 1600);
+    TH2D h_N_Cl_V_U_NOISE_1("h_N_Cl_V_U_NOISE_1", "", 25, -0.5, 24.5, 25, -0.5, 24.5);
+
     TH2D h_clV_clU_size1("h_clV_clU_size1", "", 15, -0.5, 14.5, 15, -0.5, 14.5);
 
     TH2D h_time_ADC_U_Max1("h_time_ADC_U_Max1", "", 200, 0., 1500., n_ts + 1, -0.5, double(n_ts) + 0.5);
     TH2D h_time_ADC_V_Max1("h_time_ADC_V_Max1", "", 200, 0., 1500., n_ts + 1, -0.5, double(n_ts) + 0.5);
     TH2D h_t_V_vs_U_Max1("h_t_V_vs_U_Max1", "", n_ts + 1, -0.5, double(n_ts) + 0.5, n_ts + 1, -0.5, double(n_ts) + 0.5);
+
+    TH2D h_cl_V_U_Energy_Max1("h_cl_V_U_Energy_Max1", "", 200, 0., 3500, 200, 0., 3500);
 
     TH2D h_Cross_YXc_Weighted1("h_Cross_YXc_Weighted1", "", 1000, -900., 900., 200, -500., 500.);
     TH2D h_Cross_YXc_Weighted2("h_Cross_YXc_Weighted2", "", 1000, -900., 900., 200, -500., 500.);
@@ -351,8 +356,8 @@ int main(int argc, char** argv) {
                     h_Cross_YXc_Max4.Fill(curCrs_MaxADC.getX(), curCrs_MaxADC.getY());
                 }
 
-                
-                
+
+
                 int time_Max_U = Max_UCluster.getPeakTime();
                 int time_Max_V = Max_VCluster.getPeakTime();
                 h_t_V_vs_U_Max1.Fill(time_Max_U, time_Max_V);
@@ -365,7 +370,12 @@ int main(int argc, char** argv) {
                 h_time_ADC_U_Max1.Fill(cl_ADC_U, time_Max_U);
                 h_time_ADC_V_Max1.Fill(cl_ADC_V, time_Max_V);
 
-                
+                double cl_Energy_U = Max_UCluster.getEnergy();
+                double cl_Energy_V = Max_VCluster.getEnergy();
+                double cl_Energy_Tot = cl_Energy_U + cl_Energy_V;
+
+                h_cl_V_U_Energy_Max1.Fill(cl_Energy_U, cl_Energy_V);
+
                 int group_ID = curCrs_MaxADC.getGroupID();
 
                 double crsX = curCrs_MaxADC.getX();
@@ -376,15 +386,15 @@ int main(int argc, char** argv) {
                  * are apparently out of the detector active area. Just want to check
                  * whether those events have something unique e.g.
                  */
-                if( crsY < -1400. + 2.2*crsX ){
+                if (crsY < -1400. + 2.2 * crsX) {
                     h_clV_clU_size_NOISE_1.Fill(size_clU_U, size_clU_V);
                     h_clV_clU_time_NOISE_1.Fill(time_Max_U, time_Max_V);
-                    
+
                     h_clV_clU_ADC_NOISE_1.Fill(cl_ADC_U, cl_ADC_V);
                     h_N_Cl_V_U_NOISE_1.Fill(n_U_cl, n_V_cl);
 
                 }
-                                
+
                 h_Cross_YXc_Max_Weighted1.Fill(crsX, crsY, cl_ADC_U + cl_ADC_V);
                 h_Cross_YXc_Max_Weighted_ADC_U1.Fill(crsX, crsY, cl_ADC_U);
                 h_Cross_YXc_Max_Weighted_ADC_V1.Fill(crsX, crsY, cl_ADC_V);
@@ -392,6 +402,10 @@ int main(int argc, char** argv) {
                 h_Cross_YXc_Max_Weighted_tV1.Fill(crsX, crsY, time_Max_V);
                 h_Cross_YXc_Max_Weighted_clUSize1.Fill(crsX, crsY, size_clU_U);
                 h_Cross_YXc_Max_Weighted_clVSize1.Fill(crsX, crsY, size_clU_V);
+                h_Cross_YXc_Max_Weighted_TotEnergy1.Fill(crsX, crsY, cl_Energy_Tot);
+                h_Cross_YXc_Max_Weighted_Energy_U1.Fill(crsX, crsY, cl_Energy_U);
+                h_Cross_YXc_Max_Weighted_Energy_V1.Fill(crsX, crsY, cl_Energy_V);
+
                 h_clV_clU_size1.Fill(size_clU_U, size_clU_V);
 
 
