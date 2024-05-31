@@ -254,7 +254,7 @@ int main(int argc, char **argv) {
 
     TCanvas *c2 = new TCanvas("c2", "", 1800., 1000.);
     c2->SetTopMargin(0.02);
-    c2->SetRightMargin(0.02);
+    c2->SetRightMargin(0.11);
 
     TH2D *h_Cross_YXc2 = (TH2D*) file_in->Get("h_Cross_YXc2");
     h_Cross_YXc2->SetStats(0);
@@ -295,8 +295,6 @@ int main(int argc, char **argv) {
     c1->Print(Form("Figs/Number_OF_V_vs_U_clusters_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
     c1->Print(Form("Figs/Number_OF_V_vs_U_clusters_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
 
-
-
     c2->cd();
     TH2D *h_Cross_YXc1 = (TH2D*) file_in->Get("h_Cross_YXc1");
     h_Cross_YXc1->SetStats(0);
@@ -313,7 +311,6 @@ int main(int argc, char **argv) {
     c2->Print(Form("Figs/Cross_YXc1_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_YXc1_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_YXc1_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
-
 
     TH2D *h_Cross_YXc3 = (TH2D*) file_in->Get("h_Cross_YXc3");
     h_Cross_YXc3->SetStats(0);
@@ -436,103 +433,161 @@ int main(int argc, char **argv) {
     
     
     TH2D *h_Cross_YXc_Max_Weighted1 = (TH2D*)file_in->Get("h_Cross_YXc_Max_Weighted1");
+    h_Cross_YXc_Max_Weighted1->Divide(h_Cross_YXc_Max1);
     h_Cross_YXc_Max_Weighted1->SetTitle("; Cross X coordinate [mm]; Cross Y coordinate [mm]");
     h_Cross_YXc_Max_Weighted1->SetTitleSize(0.05, "Y");
     h_Cross_YXc_Max_Weighted1->SetLabelSize(0.05, "Y");
     h_Cross_YXc_Max_Weighted1->SetTitleOffset(0.9, "Y");
     h_Cross_YXc_Max_Weighted1->SetTitleSize(0.05, "X");
     h_Cross_YXc_Max_Weighted1->SetLabelSize(0.05, "X");
-    h_Cross_YXc_Max_Weighted1->SetMinimum(1.5);
-    h_Cross_YXc_Max_Weighted1->SetMaximum(0.15*h_Cross_YXc_Max_Weighted1->GetMaximum() );
+    //h_Cross_YXc_Max_Weighted1->SetMinimum(1.5);
+    //h_Cross_YXc_Max_Weighted1->SetMaximum(0.15*h_Cross_YXc_Max_Weighted1->GetMaximum() );
     h_Cross_YXc_Max_Weighted1->Draw("colz");
     c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_TotADC_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_TotADC_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_TotADC_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
     
     TH2D *h_Cross_YXc_Max_Weighted_ADC_U1 = (TH2D*)file_in->Get("h_Cross_YXc_Max_Weighted_ADC_U1");
+    h_Cross_YXc_Max_Weighted_ADC_U1->Divide(h_Cross_YXc_Max1);
     h_Cross_YXc_Max_Weighted_ADC_U1->SetTitle("; Cross X coordinate [mm]; Cross Y coordinate [mm]");
     h_Cross_YXc_Max_Weighted_ADC_U1->SetTitleSize(0.05, "Y");
     h_Cross_YXc_Max_Weighted_ADC_U1->SetLabelSize(0.05, "Y");
     h_Cross_YXc_Max_Weighted_ADC_U1->SetTitleOffset(0.9, "Y");
     h_Cross_YXc_Max_Weighted_ADC_U1->SetTitleSize(0.05, "X");
     h_Cross_YXc_Max_Weighted_ADC_U1->SetLabelSize(0.05, "X");
-    h_Cross_YXc_Max_Weighted_ADC_U1->SetMinimum(1.5);
-    h_Cross_YXc_Max_Weighted_ADC_U1->SetMaximum(0.15*h_Cross_YXc_Max_Weighted_ADC_U1->GetMaximum() );
+//    h_Cross_YXc_Max_Weighted_ADC_U1->SetMinimum(1.5);
+//    h_Cross_YXc_Max_Weighted_ADC_U1->SetMaximum(0.15*h_Cross_YXc_Max_Weighted_ADC_U1->GetMaximum() );
     h_Cross_YXc_Max_Weighted_ADC_U1->Draw("colz");
     c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_ADC_U_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_ADC_U_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_ADC_U_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
 
     TH2D *h_Cross_YXc_Max_Weighted_ADC_V1 = (TH2D*)file_in->Get("h_Cross_YXc_Max_Weighted_ADC_V1");
+    h_Cross_YXc_Max_Weighted_ADC_V1->Divide(h_Cross_YXc_Max1);
     h_Cross_YXc_Max_Weighted_ADC_V1->SetTitle("; Cross X coordinate [mm]; Cross Y coordinate [mm]");
     h_Cross_YXc_Max_Weighted_ADC_V1->SetTitleSize(0.05, "Y");
     h_Cross_YXc_Max_Weighted_ADC_V1->SetLabelSize(0.05, "Y");
     h_Cross_YXc_Max_Weighted_ADC_V1->SetTitleOffset(0.9, "Y");
     h_Cross_YXc_Max_Weighted_ADC_V1->SetTitleSize(0.05, "X");
     h_Cross_YXc_Max_Weighted_ADC_V1->SetLabelSize(0.05, "X");
-    h_Cross_YXc_Max_Weighted_ADC_V1->SetMinimum(1.5);
-    h_Cross_YXc_Max_Weighted_ADC_V1->SetMaximum(0.15*h_Cross_YXc_Max_Weighted_ADC_V1->GetMaximum() );
+//    h_Cross_YXc_Max_Weighted_ADC_V1->SetMinimum(1.5);
+//    h_Cross_YXc_Max_Weighted_ADC_V1->SetMaximum(0.15*h_Cross_YXc_Max_Weighted_ADC_V1->GetMaximum() );
     h_Cross_YXc_Max_Weighted_ADC_V1->Draw("colz");
     c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_ADC_V_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_ADC_V_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_ADC_V_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
 
     TH2D *h_Cross_YXc_Max_Weighted_tU1 = (TH2D*)file_in->Get("h_Cross_YXc_Max_Weighted_tU1");
+    h_Cross_YXc_Max_Weighted_tU1->Divide(h_Cross_YXc_Max1);
     h_Cross_YXc_Max_Weighted_tU1->SetTitle("; Cross X coordinate [mm]; Cross Y coordinate [mm]");
     h_Cross_YXc_Max_Weighted_tU1->SetTitleSize(0.05, "Y");
     h_Cross_YXc_Max_Weighted_tU1->SetLabelSize(0.05, "Y");
     h_Cross_YXc_Max_Weighted_tU1->SetTitleOffset(0.9, "Y");
     h_Cross_YXc_Max_Weighted_tU1->SetTitleSize(0.05, "X");
     h_Cross_YXc_Max_Weighted_tU1->SetLabelSize(0.05, "X");
-    h_Cross_YXc_Max_Weighted_tU1->SetMinimum(1.5);
-    h_Cross_YXc_Max_Weighted_tU1->SetMaximum(0.05*h_Cross_YXc_Max_Weighted_tU1->GetMaximum() );
+//    h_Cross_YXc_Max_Weighted_tU1->SetMinimum(1.5);
+//    h_Cross_YXc_Max_Weighted_tU1->SetMaximum(0.05*h_Cross_YXc_Max_Weighted_tU1->GetMaximum() );
     h_Cross_YXc_Max_Weighted_tU1->Draw("colz");
     c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_tU_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_tU_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_tU_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
     
     TH2D *h_Cross_YXc_Max_Weighted_tV1 = (TH2D*)file_in->Get("h_Cross_YXc_Max_Weighted_tV1");
+    h_Cross_YXc_Max_Weighted_tV1->Divide(h_Cross_YXc_Max1);
     h_Cross_YXc_Max_Weighted_tV1->SetTitle("; Cross X coordinate [mm]; Cross Y coordinate [mm]");
     h_Cross_YXc_Max_Weighted_tV1->SetTitleSize(0.05, "Y");
     h_Cross_YXc_Max_Weighted_tV1->SetLabelSize(0.05, "Y");
     h_Cross_YXc_Max_Weighted_tV1->SetTitleOffset(0.9, "Y");
     h_Cross_YXc_Max_Weighted_tV1->SetTitleSize(0.05, "X");
     h_Cross_YXc_Max_Weighted_tV1->SetLabelSize(0.05, "X");
-    h_Cross_YXc_Max_Weighted_tV1->SetMinimum(1.5);
-    h_Cross_YXc_Max_Weighted_tV1->SetMaximum(0.05*h_Cross_YXc_Max_Weighted_tV1->GetMaximum() );
+//    h_Cross_YXc_Max_Weighted_tV1->SetMinimum(1.5);
+//    h_Cross_YXc_Max_Weighted_tV1->SetMaximum(0.05*h_Cross_YXc_Max_Weighted_tV1->GetMaximum() );
     h_Cross_YXc_Max_Weighted_tV1->Draw("colz");
     c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_tV_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_tV_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_tV_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
     
     TH2D *h_Cross_YXc_Max_Weighted_clUSize1 = (TH2D*)file_in->Get("h_Cross_YXc_Max_Weighted_clUSize1");
+    h_Cross_YXc_Max_Weighted_clUSize1->Divide(h_Cross_YXc_Max1);
     h_Cross_YXc_Max_Weighted_clUSize1->SetTitle("; Cross X coordinate [mm]; Cross Y coordinate [mm]");
     h_Cross_YXc_Max_Weighted_clUSize1->SetTitleSize(0.05, "Y");
     h_Cross_YXc_Max_Weighted_clUSize1->SetLabelSize(0.05, "Y");
     h_Cross_YXc_Max_Weighted_clUSize1->SetTitleOffset(0.9, "Y");
     h_Cross_YXc_Max_Weighted_clUSize1->SetTitleSize(0.05, "X");
     h_Cross_YXc_Max_Weighted_clUSize1->SetLabelSize(0.05, "X");
-    h_Cross_YXc_Max_Weighted_clUSize1->SetMinimum(1.5);
-    h_Cross_YXc_Max_Weighted_clUSize1->SetMaximum(0.1*h_Cross_YXc_Max_Weighted_clUSize1->GetMaximum() );
+//    h_Cross_YXc_Max_Weighted_clUSize1->SetMinimum(1.5);
+//    h_Cross_YXc_Max_Weighted_clUSize1->SetMaximum(0.1*h_Cross_YXc_Max_Weighted_clUSize1->GetMaximum() );
+    h_Cross_YXc_Max_Weighted_clUSize1->SetMaximum( 12 );
     h_Cross_YXc_Max_Weighted_clUSize1->Draw("colz");
     c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_clU_Size_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_clU_Size_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_clU_Size_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
     
     TH2D *h_Cross_YXc_Max_Weighted_clVSize1 = (TH2D*)file_in->Get("h_Cross_YXc_Max_Weighted_clVSize1");
+    h_Cross_YXc_Max_Weighted_clVSize1->Divide(h_Cross_YXc_Max1);
     h_Cross_YXc_Max_Weighted_clVSize1->SetTitle("; Cross X coordinate [mm]; Cross Y coordinate [mm]");
     h_Cross_YXc_Max_Weighted_clVSize1->SetTitleSize(0.05, "Y");
     h_Cross_YXc_Max_Weighted_clVSize1->SetLabelSize(0.05, "Y");
     h_Cross_YXc_Max_Weighted_clVSize1->SetTitleOffset(0.9, "Y");
     h_Cross_YXc_Max_Weighted_clVSize1->SetTitleSize(0.05, "X");
     h_Cross_YXc_Max_Weighted_clVSize1->SetLabelSize(0.05, "X");
-    h_Cross_YXc_Max_Weighted_clVSize1->SetMinimum(1.5);
-    h_Cross_YXc_Max_Weighted_clVSize1->SetMaximum(0.1*h_Cross_YXc_Max_Weighted_clVSize1->GetMaximum() );
+//    h_Cross_YXc_Max_Weighted_clVSize1->SetMinimum(1.5);
+//    h_Cross_YXc_Max_Weighted_clVSize1->SetMaximum(0.1*h_Cross_YXc_Max_Weighted_clVSize1->GetMaximum() );
+    h_Cross_YXc_Max_Weighted_clVSize1->SetMaximum(12 );
     h_Cross_YXc_Max_Weighted_clVSize1->Draw("colz");
     c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_clV_Size_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_clV_Size_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_clV_Size_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
 
+    TH2D *h_Cross_YXc_Max_Weighted_TotEnergy1 = (TH2D*)file_in->Get("h_Cross_YXc_Max_Weighted_TotEnergy1");
+    h_Cross_YXc_Max_Weighted_TotEnergy1->Divide(h_Cross_YXc_Max1);
+    h_Cross_YXc_Max_Weighted_TotEnergy1->SetTitle("; Cross X coordinate [mm]; Cross Y coordinate [mm]");
+    h_Cross_YXc_Max_Weighted_TotEnergy1->SetTitleSize(0.05, "Y");
+    h_Cross_YXc_Max_Weighted_TotEnergy1->SetLabelSize(0.05, "Y");
+    h_Cross_YXc_Max_Weighted_TotEnergy1->SetTitleOffset(0.9, "Y");
+    h_Cross_YXc_Max_Weighted_TotEnergy1->SetTitleSize(0.05, "X");
+    h_Cross_YXc_Max_Weighted_TotEnergy1->SetLabelSize(0.05, "X");
+//    h_Cross_YXc_Max_Weighted_TotEnergy1->SetMinimum(1.5);
+//    h_Cross_YXc_Max_Weighted_TotEnergy1->SetMaximum(0.3*h_Cross_YXc_Max_Weighted_TotEnergy1->GetMaximum() );
+    h_Cross_YXc_Max_Weighted_TotEnergy1->Draw("colz");
+    c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_TotEnergy_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_TotEnergy_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_TotEnergy_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
+
+    TH2D *h_Cross_YXc_Max_Weighted_Energy_U1 = (TH2D*)file_in->Get("h_Cross_YXc_Max_Weighted_Energy_U1");
+    double weighted_Integral = h_Cross_YXc_Max_Weighted_Energy_U1->Integral();
+    h_Cross_YXc_Max_Weighted_Energy_U1->Divide(h_Cross_YXc_Max1);
+    h_Cross_YXc_Max_Weighted_Energy_U1->SetTitle("; Cross X coordinate [mm]; Cross Y coordinate [mm]");
+    h_Cross_YXc_Max_Weighted_Energy_U1->SetTitleSize(0.05, "Y");
+    h_Cross_YXc_Max_Weighted_Energy_U1->SetLabelSize(0.05, "Y");
+    h_Cross_YXc_Max_Weighted_Energy_U1->SetTitleOffset(0.9, "Y");
+    h_Cross_YXc_Max_Weighted_Energy_U1->SetTitleSize(0.05, "X");
+    h_Cross_YXc_Max_Weighted_Energy_U1->SetLabelSize(0.05, "X");
+//    h_Cross_YXc_Max_Weighted_Energy_U1->SetMinimum(1.5);
+//    h_Cross_YXc_Max_Weighted_Energy_U1->SetMaximum(0.3*h_Cross_YXc_Max_Weighted_Energy_U1->GetMaximum() );
+    h_Cross_YXc_Max_Weighted_Energy_U1->SetMaximum(4.*weighted_Integral/h_Cross_YXc_Max1->Integral() );
+    h_Cross_YXc_Max_Weighted_Energy_U1->Draw("colz");
+    c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_Energy_U_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_Energy_U_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_Energy_U_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
+
+    TH2D *h_Cross_YXc_Max_Weighted_Energy_V1 = (TH2D*)file_in->Get("h_Cross_YXc_Max_Weighted_Energy_V1");
+    weighted_Integral = h_Cross_YXc_Max_Weighted_Energy_V1->Integral();
+    h_Cross_YXc_Max_Weighted_Energy_V1->Divide(h_Cross_YXc_Max1);
+    h_Cross_YXc_Max_Weighted_Energy_V1->SetTitle("; Cross X coordinate [mm]; Cross Y coordinate [mm]");
+    h_Cross_YXc_Max_Weighted_Energy_V1->SetTitleSize(0.05, "Y");
+    h_Cross_YXc_Max_Weighted_Energy_V1->SetLabelSize(0.05, "Y");
+    h_Cross_YXc_Max_Weighted_Energy_V1->SetTitleOffset(0.9, "Y");
+    h_Cross_YXc_Max_Weighted_Energy_V1->SetTitleSize(0.05, "X");
+    h_Cross_YXc_Max_Weighted_Energy_V1->SetLabelSize(0.05, "X");
+    //h_Cross_YXc_Max_Weighted_Energy_V1->SetMinimum(1.5);
+    //h_Cross_YXc_Max_Weighted_Energy_V1->SetMaximum(0.3*h_Cross_YXc_Max_Weighted_Energy_V1->GetMaximum() );
+    h_Cross_YXc_Max_Weighted_Energy_V1->SetMaximum(4*weighted_Integral/h_Cross_YXc_Max1->Integral() );
+    h_Cross_YXc_Max_Weighted_Energy_V1->Draw("colz");
+    c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_Energy_V_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_Energy_V_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_Energy_V_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
+    
     c1->cd()->SetLogz(0);
     
     TH2D *h_t_V_vs_U_Max1 = (TH2D*)file_in->Get("h_t_V_vs_U_Max1");
