@@ -194,6 +194,10 @@ namespace uRwellTools {
             fnStrips = fv_Hits.size();
         }
 
+        const double getEnergy(){
+            return fEnergy;
+        }
+        
         const double getPeakADC() {
             return fPeakADC;
         }
