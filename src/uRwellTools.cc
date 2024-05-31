@@ -207,7 +207,6 @@ void uRwellTools::DrawGroupStripBiundaries() {
 }
 
 namespace uRwellTools {
-    
 
     uRwellCluster getMaxAdcCluster(std::vector<uRwellCluster> &v_clusters, int MinHits) {
         int ind_Max = 0;
@@ -229,7 +228,7 @@ namespace uRwellTools {
         // energy that easily can be checked 
         if (ADC_Max > 0) {
             return v_clusters.at(ind_Max);
-        }else{
+        } else {
             uRwellCluster tmp;
             tmp.setEnergy(0);
             return tmp;
@@ -272,20 +271,41 @@ namespace uRwellTools {
     void uRwellCluster::findPeakTime() {
 
         int time = -1;
-        
+
         double MaxADC = 0;
-        
+
         for (auto curHit : fv_Hits) {
-            time = MaxADC > curHit.adc ? time : curHit.ts;
+
+            if (curHit.adc > MaxADC) {
+                MaxADC = curHit.adc;
+                time = curHit.ts;
+            }
         }
         fPeakTime = time;
     }
-    
-    
+
     void uRwellCluster::FinalizeCluster() {
-        findPeakEnergy();
-        findAvgStrip();
-        findPeakTime();
+
+        double MaxADC = 0;
+        double WeightedSum = 0;
+        double ADCSum = 0;
+        int time = -1;
+
+        for (auto curHit : fv_Hits) {
+
+
+            if (curHit.adc > MaxADC) {
+                MaxADC = curHit.adc;
+                time = curHit.ts;
+            }
+
+            WeightedSum = WeightedSum + curHit.adc * curHit.strip;
+            ADCSum = ADCSum + curHit.adc;
+        }
+
+        fPeakADC = MaxADC;                      // ADC of the strip w/ highest ADC
+        fAvgStrip = WeightedSum / ADCSum;       // The weighted average strip number of the cluster
+        fPeakTime = time;                       // Time of the highest energy strip
     }
 
     uRwellCross::uRwellCross() {
@@ -359,7 +379,7 @@ namespace uRwellTools {
             double curHitEnergy = v_Hits.at(i).adc;
 
             //cout << "v_Hits.at(i).strip = " << v_Hits.at(i).strip << "    curStrip =  " << curStrip << endl;
-                        
+
             /*
              * Since the v_Hits is sorted by Strip numbers, in the following if statement we 
              * don't need to chack fro absalute value for the curStrip - prev_Strip
