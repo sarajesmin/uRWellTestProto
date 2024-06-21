@@ -16,6 +16,7 @@
 #include <TLatex.h>
 #include <TLegend.h>
 #include <TCanvas.h>
+#include <TStyle.h>
 
 #include <uRwellTools.h>
 using namespace std;
@@ -67,6 +68,8 @@ int main(int argc, char **argv) {
     cout << "The Minimum cluster size is " << MinClSize << "hits" << endl;
 
 
+    gStyle->SetOptStat(0);
+    
     TCanvas *c1 = new TCanvas("c1", "", 950, 950);
     c1->SetTopMargin(0.04);
     c1->SetRightMargin(0.04);
@@ -408,7 +411,7 @@ int main(int argc, char **argv) {
     h_Cross_YXc_Max1->SetTitleOffset(0.9, "Y");
     h_Cross_YXc_Max1->SetTitleSize(0.05, "X");
     h_Cross_YXc_Max1->SetLabelSize(0.05, "X");
-    h_Cross_YXc_Max1->SetMaximum( 0.1 * h_Cross_YXc1->GetMaximum() );
+    h_Cross_YXc_Max1->SetMaximum( 0.15 * h_Cross_YXc1->GetMaximum() );
     h_Cross_YXc_Max1->SetMinimum(1.5);
     h_Cross_YXc_Max1->Draw("col");
     DrawActiveArea();
@@ -540,6 +543,7 @@ int main(int argc, char **argv) {
     c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_clV_Size_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
 
     TH2D *h_Cross_YXc_Max_Weighted_TotEnergy1 = (TH2D*)file_in->Get("h_Cross_YXc_Max_Weighted_TotEnergy1");
+    double weighted_Integral = h_Cross_YXc_Max_Weighted_TotEnergy1->Integral();
     h_Cross_YXc_Max_Weighted_TotEnergy1->Divide(h_Cross_YXc_Max1);
     h_Cross_YXc_Max_Weighted_TotEnergy1->SetTitle("; Cross X coordinate [mm]; Cross Y coordinate [mm]");
     h_Cross_YXc_Max_Weighted_TotEnergy1->SetTitleSize(0.05, "Y");
@@ -549,13 +553,14 @@ int main(int argc, char **argv) {
     h_Cross_YXc_Max_Weighted_TotEnergy1->SetLabelSize(0.05, "X");
 //    h_Cross_YXc_Max_Weighted_TotEnergy1->SetMinimum(1.5);
 //    h_Cross_YXc_Max_Weighted_TotEnergy1->SetMaximum(0.3*h_Cross_YXc_Max_Weighted_TotEnergy1->GetMaximum() );
+    h_Cross_YXc_Max_Weighted_TotEnergy1->SetMaximum(6*weighted_Integral/h_Cross_YXc_Max1->Integral() );
     h_Cross_YXc_Max_Weighted_TotEnergy1->Draw("colz");
     c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_TotEnergy_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_TotEnergy_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_TotEnergy_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
 
     TH2D *h_Cross_YXc_Max_Weighted_Energy_U1 = (TH2D*)file_in->Get("h_Cross_YXc_Max_Weighted_Energy_U1");
-    double weighted_Integral = h_Cross_YXc_Max_Weighted_Energy_U1->Integral();
+    weighted_Integral = h_Cross_YXc_Max_Weighted_Energy_U1->Integral();
     h_Cross_YXc_Max_Weighted_Energy_U1->Divide(h_Cross_YXc_Max1);
     h_Cross_YXc_Max_Weighted_Energy_U1->SetTitle("; Cross X coordinate [mm]; Cross Y coordinate [mm]");
     h_Cross_YXc_Max_Weighted_Energy_U1->SetTitleSize(0.05, "Y");
@@ -565,7 +570,7 @@ int main(int argc, char **argv) {
     h_Cross_YXc_Max_Weighted_Energy_U1->SetLabelSize(0.05, "X");
 //    h_Cross_YXc_Max_Weighted_Energy_U1->SetMinimum(1.5);
 //    h_Cross_YXc_Max_Weighted_Energy_U1->SetMaximum(0.3*h_Cross_YXc_Max_Weighted_Energy_U1->GetMaximum() );
-    h_Cross_YXc_Max_Weighted_Energy_U1->SetMaximum(4.*weighted_Integral/h_Cross_YXc_Max1->Integral() );
+    h_Cross_YXc_Max_Weighted_Energy_U1->SetMaximum(6.*weighted_Integral/h_Cross_YXc_Max1->Integral() );
     h_Cross_YXc_Max_Weighted_Energy_U1->Draw("colz");
     c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_Energy_U_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_Energy_U_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
@@ -582,13 +587,15 @@ int main(int argc, char **argv) {
     h_Cross_YXc_Max_Weighted_Energy_V1->SetLabelSize(0.05, "X");
     //h_Cross_YXc_Max_Weighted_Energy_V1->SetMinimum(1.5);
     //h_Cross_YXc_Max_Weighted_Energy_V1->SetMaximum(0.3*h_Cross_YXc_Max_Weighted_Energy_V1->GetMaximum() );
-    h_Cross_YXc_Max_Weighted_Energy_V1->SetMaximum(4*weighted_Integral/h_Cross_YXc_Max1->Integral() );
+    h_Cross_YXc_Max_Weighted_Energy_V1->SetMaximum(6*weighted_Integral/h_Cross_YXc_Max1->Integral() );
     h_Cross_YXc_Max_Weighted_Energy_V1->Draw("colz");
     c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_Energy_V_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_Energy_V_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
     c2->Print(Form("Figs/Cross_YXc_Max1_Weighted_Energy_V_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
     
     c1->cd()->SetLogz(0);
+    c1->SetRightMargin(0.15);
+    c1->SetLeftMargin(0.12);
     
     TH2D *h_t_V_vs_U_Max1 = (TH2D*)file_in->Get("h_t_V_vs_U_Max1");
     h_t_V_vs_U_Max1->SetTitle("; peak time sample U; peak time sample V");
@@ -633,6 +640,82 @@ int main(int argc, char **argv) {
     c1->Print(Form("Figs/Vcl_size1_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
     c1->Print(Form("Figs/Vcl_size1_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
     c1->Print(Form("Figs/Vcl_size1_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
+    
+    
+    TH2D *h_GEM_cl_YXC1_MAX1 = (TH2D*)file_in->Get("h_GEM_cl_YXC1_MAX1");
+    h_GEM_cl_YXC1_MAX1->SetTitle("; GEM X coordinate [cm]; GEM Y coordinate [cm]");
+    
+    c1->SetLogz(0);
+    TH2D *h_GEM_cl_YXC_MAX_Weighted_ADC_Tot1 = (TH2D*)file_in->Get("h_GEM_cl_YXC_MAX_Weighted_ADC_Tot1");
+    h_GEM_cl_YXC_MAX_Weighted_ADC_Tot1->Divide(h_GEM_cl_YXC1_MAX1);
+    h_GEM_cl_YXC_MAX_Weighted_ADC_Tot1->Draw("colz");
+    c1->Print(Form("Figs/GEM_YXC_Avg_ADC_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c1->Print(Form("Figs/GEM_YXC_Avg_ADC_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c1->Print(Form("Figs/GEM_YXC_Avg_ADC_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
+    
+    TH2D *h_GEM_ADCY_vs_ADCX_Max1 = (TH2D*)file_in->Get("h_GEM_ADCY_vs_ADCX_Max1");
+    h_GEM_ADCY_vs_ADCX_Max1->SetTitle("; ADC X; ADC Y ");
+    h_GEM_ADCY_vs_ADCX_Max1->Draw();
+    c1->Print(Form("Figs/GEM_ADC_YXC_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c1->Print(Form("Figs/GEM_ADC_YXC_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c1->Print(Form("Figs/GEM_ADC_YXC_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
+    
+    TH1D *h_GEM_ADC_X1 = (TH1D*)h_GEM_ADCY_vs_ADCX_Max1->ProjectionX("h_GEM_ADC_X1", 1, h_GEM_ADCY_vs_ADCX_Max1->GetNbinsY() );
+    h_GEM_ADC_X1->Draw();
+    h_GEM_ADC_X1->Fit(f_Landau, "MeV", "", 0., 800);
+    double peak_X = f_Landau->GetParameter(1);
+    lat1->DrawLatex(0.65, 0.8, Form("MPV = %1.2f", peak_X));    
+    c1->Print(Form("Figs/GEM_ADC_X_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c1->Print(Form("Figs/GEM_ADC_X_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c1->Print(Form("Figs/GEM_ADC_X_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
+    
+    TH1D *h_GEM_ADC_Y1 = (TH1D*)h_GEM_ADCY_vs_ADCX_Max1->ProjectionY("h_GEM_ADC_Y1", 1, h_GEM_ADCY_vs_ADCX_Max1->GetNbinsX() );
+    h_GEM_ADC_Y1->Draw();
+    h_GEM_ADC_Y1->Fit(f_Landau, "MeV", "", 0., 800);
+    peak_X = f_Landau->GetParameter(1);
+    lat1->DrawLatex(0.65, 0.8, Form("MPV = %1.2f", peak_X));    
+    c1->Print(Form("Figs/GEM_ADC_Y_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c1->Print(Form("Figs/GEM_ADC_Y_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c1->Print(Form("Figs/GEM_ADC_Y_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
+    
+    TH2D *h_GEM_tY_vs_tX_Max1 = (TH2D*)file_in->Get("h_GEM_tY_vs_tX_Max1");
+    h_GEM_tY_vs_tX_Max1->SetTitle("; GEM peak time X; GEM peak time Y");
+    h_GEM_tY_vs_tX_Max1->Draw("colz");
+    c1->Print(Form("Figs/GEM_Peak_time_Y_vs_X_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c1->Print(Form("Figs/GEM_Peak_time_Y_vs_X_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c1->Print(Form("Figs/GEM_Peak_time_Y_vs_X_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
+    
+    TH1D *hGEM_peakTime_X1 = (TH1D*)h_GEM_tY_vs_tX_Max1->ProjectionX("hGEM_peakTime_X1", 1, h_GEM_tY_vs_tX_Max1->GetNbinsY() );
+    hGEM_peakTime_X1->Draw();
+    c1->Print(Form("Figs/GEM_Peak_time_X_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c1->Print(Form("Figs/GEM_Peak_time_X_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c1->Print(Form("Figs/GEM_Peak_time_X_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
+    
+    TH1D *hGEM_peakTime_Y1 = (TH1D*)h_GEM_tY_vs_tX_Max1->ProjectionY("hGEM_peakTime_Y1", 1, h_GEM_tY_vs_tX_Max1->GetNbinsX() );
+    hGEM_peakTime_Y1->Draw();
+    c1->Print(Form("Figs/GEM_Peak_time_Y_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c1->Print(Form("Figs/GEM_Peak_time_Y_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c1->Print(Form("Figs/GEM_Peak_time_Y_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
+    
+    
+    TH2D *h_GEM_clSize_Y_vs_X_Max1 = (TH2D*)file_in->Get("h_GEM_clSize_Y_vs_X_Max1");
+    h_GEM_clSize_Y_vs_X_Max1->SetTitle("; GEM X cluster size; GEM Y cluster size");
+    h_GEM_clSize_Y_vs_X_Max1->Draw("colz");
+    c1->Print(Form("Figs/GEM_cl_Size_Y_vs_X_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c1->Print(Form("Figs/GEM_cl_Size_Y_vs_X_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c1->Print(Form("Figs/GEM_cl_Size_Y_vs_X_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
+    
+    TH1D *h_GEM_cl_Size_X1 = (TH1D*)h_GEM_clSize_Y_vs_X_Max1->ProjectionX("h_GEM_cl_Size_X1", 1, h_GEM_clSize_Y_vs_X_Max1->GetNbinsY() );
+    h_GEM_cl_Size_X1->Draw();
+    c1->Print(Form("Figs/GEM_cl_Size_X_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c1->Print(Form("Figs/GEM_cl_Size_X_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c1->Print(Form("Figs/GEM_cl_Size_X_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
+    
+    TH1D *h_GEM_cl_Size_Y1 = (TH1D*)h_GEM_clSize_Y_vs_X_Max1->ProjectionY("h_GEM_cl_Size_Y1", 1, h_GEM_clSize_Y_vs_X_Max1->GetNbinsX() );
+    h_GEM_cl_Size_Y1->Draw();
+    c1->Print(Form("Figs/GEM_cl_Size_Y_%d_t%1.1f_m%d.pdf", run, threshold, MinClSize));
+    c1->Print(Form("Figs/GEM_cl_Size_Y_%d_t%1.1f_m%d.png", run, threshold, MinClSize));
+    c1->Print(Form("Figs/GEM_cl_Size_Y_%d_t%1.1f_m%d.root", run, threshold, MinClSize));
     
     
     TCanvas *c3 = new TCanvas("c3", "", 1600, 1200);
