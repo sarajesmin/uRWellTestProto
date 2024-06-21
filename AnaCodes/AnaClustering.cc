@@ -141,6 +141,10 @@ int main(int argc, char** argv) {
     TH2D h_Cross_YXc_Max_Weighted_TotEnergy1("h_Cross_YXc_Max_Weighted_TotEnergy1", "", 1000, -900., 900., 200, -500., 500.);
     TH2D h_Cross_YXc_Max_Weighted_Energy_U1("h_Cross_YXc_Max_Weighted_Energy_U1", "", 1000, -900., 900., 200, -500., 500.);
     TH2D h_Cross_YXc_Max_Weighted_Energy_V1("h_Cross_YXc_Max_Weighted_Energy_V1", "", 1000, -900., 900., 200, -500., 500.);
+
+    TH1D h_ADC_U_Max2("h_ADC_U_Max2", "", 200, 0., 1500.);
+    TH1D h_ADC_V_Max2("h_ADC_V_Max2", "", 200, 0., 1500.);
+
     /* 
      * Noise related histograms
      */
@@ -164,7 +168,15 @@ int main(int argc, char** argv) {
 
     TH2D h_GEM_XY1("h_GEM_XY1", "", 129, -0.5, 128.5, 129, -0.5, 128.5);
     TH2D h_GEM_cl_YXC1("h_GEM_cl_YXC1", "", 100, -0.5, 10.5, 200, -0.5, 10.5);
-    TH2D h_GEM_cl_YXC_MAX1("h_GEM_cl_YXC1_MAX", "", 100, -0.5, 10.5, 200, -0.5, 10.5);
+    TH2D h_GEM_cl_YXC_MAX1("h_GEM_cl_YXC1_MAX1", "", 100, -0.5, 10.5, 200, -0.5, 10.5);
+    TH2D h_GEM_cl_YXC_MAX_Weighted_ADC_Tot1("h_GEM_cl_YXC_MAX_Weighted_ADC_Tot1", "", 100, -0.5, 10.5, 200, -0.5, 10.5);
+    TH2D h_GEM_cl_YXC_MAX_Weighted_ADC_Y1("h_GEM_cl_YXC_MAX_Weighted_ADC_Y1", "", 100, -0.5, 10.5, 200, -0.5, 10.5);
+    TH2D h_GEM_cl_YXC_MAX_Weighted_ADC_X1("h_GEM_cl_YXC_MAX_Weighted_ADC_X1", "", 100, -0.5, 10.5, 200, -0.5, 10.5);
+
+    TH2D h_GEM_tY_vs_tX_Max1("h_GEM_tY_vs_tX_Max1", "", n_ts + 1, -0.5, double(n_ts) + 0.5, n_ts + 1, -0.5, double(n_ts) + 0.5);
+    TH2D h_GEM_ADCY_vs_ADCX_Max1("h_GEM_ADCY_vs_ADCX_Max1", "", 200, 0., 1500, 200, 0., 1500);
+    TH2D h_GEM_clSize_Y_vs_X_Max1("h_GEM_clSize_Y_vs_X_Max1", "", 11, -0.5, 10.5, 11, -0.5, 10.5);
+
     TH1D h_ADC_GEM_Y1("h_ADC_GEM_Y1", "", 200, 0., 1000.);
     TH1D h_ADC_GEM_X1("h_ADC_GEM_X1", "", 200, 0., 1000.);
 
@@ -173,6 +185,11 @@ int main(int argc, char** argv) {
 
     TH2D h_nVcl_vs_Ucoord1("h_nVcl_vs_Ucoord1", "", 200, 0., 710., 15, -0.5, 14.5);
     TH2D h_nUcl_vs_Vcoord1("h_nUcl_vs_Vcoord1", "", 200, 0., 710., 15, -0.5, 14.5);
+
+    TH2D h_ADC_vs_U_Max1("h_ADC_vs_U_Max1", "", 705, -0.5, 704.5, 200, 0., 1600);
+    TH2D h_ADC_vs_V_Max1("h_ADC_vs_V_Max1", "", 705, -0.5, 704.5, 200, 0., 1600);
+    TH2D h_ADC_vs_U_Max2("h_ADC_vs_U_Max2", "", 705, -0.5, 704.5, 200, 0., 1600);
+    TH2D h_ADC_vs_V_Max2("h_ADC_vs_V_Max2", "", 705, -0.5, 704.5, 200, 0., 1600);
 
     TH2D h_Cross_YXx1_[nMaxGroup];
     TH2D h_ADC_V_U1_[nMaxGroup];
@@ -272,7 +289,26 @@ int main(int argc, char** argv) {
             uRwellCluster GEM_Max_X_Cluster = uRwellTools::getMaxAdcCluster(v_X_GEM_Clusters, 2);
 
             if (GEM_Max_Y_Cluster.getHits()->size() > 0 && GEM_Max_X_Cluster.getHits()->size() > 0) {
-                h_GEM_cl_YXC_MAX1.Fill(GEM_Max_X_Cluster.getAvgStrip() * GEM_strip2Coord, GEM_Max_Y_Cluster.getAvgStrip() * GEM_strip2Coord);
+                double GEM_X = GEM_Max_X_Cluster.getAvgStrip() * GEM_strip2Coord;
+                double GEM_Y = GEM_Max_Y_Cluster.getAvgStrip() * GEM_strip2Coord;
+
+                int t_X = GEM_Max_X_Cluster.getPeakTime();
+                int t_Y = GEM_Max_Y_Cluster.getPeakTime();
+
+                int cl_size_X = GEM_Max_X_Cluster.getHits()->size();
+                int cl_size_Y = GEM_Max_Y_Cluster.getHits()->size();
+
+                double ADC_X = GEM_Max_X_Cluster.getPeakADC();
+                double ADC_Y = GEM_Max_Y_Cluster.getPeakADC();
+
+                h_GEM_cl_YXC_MAX1.Fill(GEM_X, GEM_Y);
+                h_GEM_tY_vs_tX_Max1.Fill(t_X, t_Y);
+                h_GEM_ADCY_vs_ADCX_Max1.Fill(ADC_X, ADC_Y);
+                h_GEM_clSize_Y_vs_X_Max1.Fill(cl_size_X, cl_size_Y);
+
+                h_GEM_cl_YXC_MAX_Weighted_ADC_Tot1.Fill(GEM_X, GEM_Y, ADC_X + ADC_Y);
+                h_GEM_cl_YXC_MAX_Weighted_ADC_X1.Fill(GEM_X, GEM_Y, ADC_X);
+                h_GEM_cl_YXC_MAX_Weighted_ADC_Y1.Fill(GEM_X, GEM_Y, ADC_Y);
             }
 
 
@@ -347,6 +383,14 @@ int main(int argc, char** argv) {
                 }
             }
 
+
+            if (Max_UCluster.getHits()->size() > 0) {
+                h_ADC_vs_U_Max1.Fill(Max_UCluster.getAvgStrip(), Max_UCluster.getPeakADC());
+            }
+            if (Max_VCluster.getHits()->size() > 0) {
+                h_ADC_vs_V_Max1.Fill(Max_VCluster.getAvgStrip(), Max_VCluster.getPeakADC());
+            }
+
             if (Max_UCluster.getHits()->size() > 0 && Max_VCluster.getHits()->size() > 0) {
                 // This cross represents the cross with Maximum U and Maximum V cluster
                 curCrs_MaxADC = uRwellCross(Max_UCluster.getAvgStrip(), Max_VCluster.getAvgStrip());
@@ -355,8 +399,6 @@ int main(int argc, char** argv) {
                 if (n_U_cl > n_MaxClusters || n_V_cl > n_MaxClusters) {
                     h_Cross_YXc_Max4.Fill(curCrs_MaxADC.getX(), curCrs_MaxADC.getY());
                 }
-
-
 
                 int time_Max_U = Max_UCluster.getPeakTime();
                 int time_Max_V = Max_VCluster.getPeakTime();
@@ -375,6 +417,9 @@ int main(int argc, char** argv) {
                 double cl_Energy_Tot = cl_Energy_U + cl_Energy_V;
 
                 h_cl_V_U_Energy_Max1.Fill(cl_Energy_U, cl_Energy_V);
+
+                h_ADC_vs_U_Max2.Fill(Max_UCluster.getAvgStrip(), Max_UCluster.getPeakADC());
+                h_ADC_vs_V_Max2.Fill(Max_VCluster.getAvgStrip(), Max_VCluster.getPeakADC());
 
                 int group_ID = curCrs_MaxADC.getGroupID();
 
@@ -490,6 +535,13 @@ int main(int argc, char** argv) {
 
             if (n_GEM_Y_Cl == 1 && n_GEM_X_Cl == 1) {
                 h_n_uRwell_V_vs_U_MultiHitCl.Fill(n_U_MultiHit_clusters, n_V_MultiHit_clusters);
+
+                if (Max_UCluster.getHits()->size() > 0) {
+                    h_ADC_U_Max2.Fill(Max_UCluster.getPeakADC());
+                }
+                if (Max_VCluster.getHits()->size() > 0) {
+                    h_ADC_V_Max2.Fill(Max_VCluster.getPeakADC());
+                }
 
                 for (int iUcl = 0; iUcl < v_U_Clusters.size(); iUcl++) {
                     int nhits = v_U_Clusters.at(iUcl).getHits()->size();
