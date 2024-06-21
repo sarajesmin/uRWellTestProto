@@ -67,11 +67,11 @@ int uRwellTools::getURwellSlot(int ch) {
 int uRwellTools::slot_Offset[uRwellTools::nSlot] = {0, 64, 192, 1448, 320, 1576, 1000, 1064, 1192, 448, 1320, 576, 0, 128, 1000, 1128};
 
 uRwellTools::ADC_Distribution uRwellTools::CalcMPVandMean(TH1D* h_in) {
-
+    
     TF1 *f_Landau = new TF1("f_Landau", "[0]*TMath::Landau(x, [1], [2])", 0., 1000.);
     f_Landau->SetNpx(4500);
 
-    f_Landau->SetParameters(5. * h_in->GetMaximum(), h_in->GetBinCenter(h_in->GetMaximumBin()), 10);
+    f_Landau->SetParameters(7. * h_in->GetMaximum(), h_in->GetBinCenter(h_in->GetMaximumBin()), 5);
     h_in->Fit(f_Landau, "MeV", "", 0., 500);
 
     ADC_Distribution distr;
@@ -80,9 +80,9 @@ uRwellTools::ADC_Distribution uRwellTools::CalcMPVandMean(TH1D* h_in) {
     distr.errMPV = f_Landau->GetParError(1);
     distr.Mean = h_in->GetMean();
     distr.errMean = h_in->GetMeanError();
-
+        
     delete f_Landau;
-
+    
     return distr;
 }
 
