@@ -91,11 +91,14 @@ int main(int argc, char** argv) {
     hipo::bank buRWellADC(factory.getSchema("URWELL::adc"));
     hipo::bank bRAWADc(factory.getSchema("RAW::adc"));
     hipo::bank bRunConf(factory.getSchema("RUN::config"));
+    hipo::bank bXYHodo(factory.getSchema("XYHODO::tdc"));
 
     hipo::writer writer;
     writer.getDictionary().addSchema(sch);
     writer.getDictionary().addSchema(factory.getSchema("RAW::adc"));
     writer.getDictionary().addSchema(factory.getSchema("RUN::config"));
+    writer.getDictionary().addSchema(factory.getSchema("XYHODO::tdc"));
+    
     writer.open(outputFile);
 
     int __bank_Sec_INDEX_ = buRWellADC.getSchema().getEntryOrder("sector");
@@ -181,6 +184,7 @@ int main(int argc, char** argv) {
 
             event.getStructure(buRWellADC);
             event.getStructure(bRAWADc);
+            event.getStructure(bXYHodo);
             event.getStructure(bRunConf);
 
             int ev_Number = bRunConf.getInt("event", 0);
@@ -349,6 +353,7 @@ int main(int argc, char** argv) {
             outEvent.addStructure(bRAWADc);
             outEvent.addStructure(bRunConf);
             outEvent.addStructure(buRwellHits);
+            outEvent.addStructure(bXYHodo);
             writer.addEvent(outEvent);
 
         }
