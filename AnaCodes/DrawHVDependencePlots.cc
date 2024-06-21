@@ -94,6 +94,8 @@ int main(int argc, char **argv) {
                   198620, 198621, 198622, 198623, 198624, 198625, 198626};
     mv_runs[18] = {2091, 2090, 2089, 2085, 2087};
     mv_runs[19] = {2092, 2095, 2096, 2099};
+    mv_runs[20] = {2100, 2101, 2103, 2104, 2105, 2106, 2108, 2110, 2111, 2112, 2119};
+    mv_runs[21] = {2119, 2130, 2139, 2145};
     std::map<int, double> m_MESH_HV; // The key is the run number, the value is the MESH_HV
     std::map<int, double> m_Cathode_HV; // The key is the run number, the value is the Cathode_HV
     std::map<int, double> m_Drift_HV; // The key is the run number, the value is the Drift_HV = Hathode_HV - MESH_HV
@@ -117,6 +119,8 @@ int main(int argc, char **argv) {
     m_HVType[16] = "FILE_IND";
     m_HVType[18] = "MESH";
     m_HVType[19] = "DRIFT";
+    m_HVType[20] = "DRIFT";
+    m_HVType[21] = "MESH";
 
     std::map<int, std::string> m_XTitle;
 
@@ -136,6 +140,8 @@ int main(int argc, char **argv) {
     m_XTitle[16] = "File number";
     m_XTitle[18] = "MESH HV [V]";
     m_XTitle[19] = "DRIFT HV [V]";
+    m_XTitle[20] = "DRIFT HV [V]";
+    m_XTitle[21] = "MESH HV [V]";
     
     TCanvas *c1 = new TCanvas("c1", "", 950, 950);
     c1->SetTopMargin(0.02);
@@ -271,9 +277,24 @@ int main(int argc, char **argv) {
         h_V_PeakADC_MultiCl1->SetAxisRange(0., 500., "X");
         TH1D *h_MaxADC_GEM_X1 = (TH1D*) file_in->Get("h_MaxADC_GEM_X1");
         TH1D *h_MaxADC_GEM_Y1 = (TH1D*) file_in->Get("h_MaxADC_GEM_Y1");
+        
+        TH2D *h_time_ADC_U_Max1 = (TH2D*)file_in->Get("h_time_ADC_U_Max1");
+        TH1D *h_ADC_U_Max1 = (TH1D*)h_time_ADC_U_Max1->ProjectionX("h_ADC_U_Max1", 1, h_time_ADC_U_Max1->GetNbinsY() );
+        h_ADC_U_Max1->SetAxisRange(0., 500., "X");
 
-        uRwellTools::ADC_Distribution distr_U = uRwellTools::CalcMPVandMean(h_U_PeakADC_MultiCl1);
-        uRwellTools::ADC_Distribution distr_V = uRwellTools::CalcMPVandMean(h_V_PeakADC_MultiCl1);
+        TH2D *h_time_ADC_V_Max1 = (TH2D*)file_in->Get("h_time_ADC_V_Max1");
+        TH1D *h_ADC_V_Max1 = (TH1D*)h_time_ADC_V_Max1->ProjectionX("h_ADC_V_Max1", 1, h_time_ADC_V_Max1->GetNbinsY() );
+        h_ADC_V_Max1->SetAxisRange(0., 500., "X");
+        
+        TH1D *h_ADC_U_Max2 = (TH1D*)file_in->Get("h_ADC_U_Max2");
+        h_ADC_U_Max2->SetAxisRange(0., 500., "X");
+        TH1D *h_ADC_V_Max2 = (TH1D*)file_in->Get("h_ADC_V_Max2");
+        h_ADC_V_Max2->SetAxisRange(0., 500., "X");
+        
+        uRwellTools::ADC_Distribution distr_U = uRwellTools::CalcMPVandMean(h_ADC_U_Max2);
+        uRwellTools::ADC_Distribution distr_V = uRwellTools::CalcMPVandMean(h_ADC_V_Max2);
+//        uRwellTools::ADC_Distribution distr_U = uRwellTools::CalcMPVandMean(h_U_PeakADC_MultiCl1);
+//        uRwellTools::ADC_Distribution distr_V = uRwellTools::CalcMPVandMean(h_V_PeakADC_MultiCl1);
         uRwellTools::ADC_Distribution distr_GEM_X = uRwellTools::CalcMPVandMean(h_MaxADC_GEM_X1);
         uRwellTools::ADC_Distribution distr_GEM_Y = uRwellTools::CalcMPVandMean(h_MaxADC_GEM_Y1);
 
@@ -302,7 +323,7 @@ int main(int argc, char **argv) {
     leg1->AddEntry(gr_Eff_V, "V Cluster");
     leg1->AddEntry(gr_Eff_OR, "Any Cluster");
     leg1->AddEntry(gr_Eff_AND, "U and V Cluster");
-    leg1->AddEntry(gr_Eff_CrsBgrSubtr, "Bgr Subtracted");
+    //leg1->AddEntry(gr_Eff_CrsBgrSubtr, "Bgr Subtracted");
 
     TMultiGraph *mtgr1 = new TMultiGraph();
     mtgr1->Add(gr_Eff_U);
@@ -339,12 +360,12 @@ int main(int argc, char **argv) {
     TMultiGraph *mtgr_ADC_MPV = new TMultiGraph();
     mtgr_ADC_MPV->Add(gr_ADC_MPV_U);
     mtgr_ADC_MPV->Add(gr_ADC_MPV_V);
-    mtgr_ADC_MPV->Add(gr_ADC_GEM_X);
-    mtgr_ADC_MPV->Add(gr_ADC_GEM_Y);
+//    mtgr_ADC_MPV->Add(gr_ADC_GEM_X);
+//    mtgr_ADC_MPV->Add(gr_ADC_GEM_Y);
     mtgr_ADC_MPV->Draw("APL");
     mtgr_ADC_MPV->SetTitle(Form("; %s; MPV [ADC]", m_XTitle[series].c_str()));
-    mtgr_ADC_MPV->SetMaximum(80);
-    mtgr_ADC_MPV->SetMinimum(20);
+    mtgr_ADC_MPV->SetMaximum(100);
+    mtgr_ADC_MPV->SetMinimum(30);
     leg2->Draw();
     c1->Print(Form("Figs/HV_MPV_Dependence_Thr_%1.1f_MinHits_%d_Series_%d.pdf", threshold, MinHits, series));
     c1->Print(Form("Figs/HV_MPV_Dependence_Thr_%1.1f_MinHits_%d_Series_%d.png", threshold, MinHits, series));
